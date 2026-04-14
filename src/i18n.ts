@@ -53,6 +53,7 @@ const resources = {
         title: 'Trabalhos realizados',
         empty: 'Ainda não existem trabalhos publicados nesta categoria.',
         viewImage: 'Ver imagem',
+        viewAll: 'Ver todos os trabalhos',
       },
       faq: {
         title: 'Perguntas frequentes',
@@ -163,6 +164,7 @@ const resources = {
         title: 'Completed works',
         empty: 'No works published for this category yet.',
         viewImage: 'View image',
+        viewAll: 'View all works',
       },
       faq: {
         title: 'Frequently asked questions',
@@ -273,6 +275,7 @@ const resources = {
         title: 'Abgeschlossene Arbeiten',
         empty: 'Noch keine Arbeiten in dieser Kategorie veröffentlicht.',
         viewImage: 'Bild anzeigen',
+        viewAll: 'Alle Arbeiten ansehen',
       },
       faq: {
         title: 'Häufige Fragen',
@@ -383,6 +386,7 @@ const resources = {
         title: 'Travaux réalisés',
         empty: 'Aucun travail publié dans cette catégorie pour le moment.',
         viewImage: "Voir l'image",
+        viewAll: 'Voir tous les travaux',
       },
       faq: {
         title: 'Questions fréquentes',

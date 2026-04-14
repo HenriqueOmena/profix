@@ -346,102 +346,199 @@ img { display: block; max-width: 100% }
 .value-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: .25rem }
 .value-text { font-size: .8rem; color: var(--muted); line-height: 1.6 }
 
-/* ─── Services — Vertical Tabs Layout ───────────────────── */
+/* ─── Services — Card Grid Layout ───────────────────────── */
 .svc-icon { width: 20px; height: 20px }
 
-@keyframes panelIn { from { opacity: 0; transform: translateX(8px) } to { opacity: 1; transform: none } }
-
-/* Outer wrapper: sidebar | panel */
-.svc-vtabs-wrapper {
+/* 2-column responsive grid */
+.svc-cards-grid {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+/* Card */
+.svc-card {
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
-  overflow: hidden;
-  background: var(--surface);
-  min-height: 420px;
-}
-
-/* Left sidebar — list of service buttons */
-.svc-vtab-list {
-  border-right: 1px solid var(--border);
+  padding: 1.75rem;
   display: flex;
   flex-direction: column;
-  padding: .5rem;
-  gap: .2rem;
-  background: var(--bg);
+  gap: 1.25rem;
+  transition: border-color var(--t), box-shadow var(--t), transform var(--t);
 }
-
-.svc-vtab-item {
-  display: flex;
-  align-items: center;
-  gap: .7rem;
-  padding: .85rem .9rem;
-  border-radius: var(--r-sm);
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--muted);
-  font-size: .82rem;
-  font-weight: 600;
-  text-align: left;
-  cursor: pointer;
-  transition: color var(--t), background var(--t), border-color var(--t);
-  width: 100%;
-}
-.svc-vtab-item:hover { color: var(--text); background: var(--surface-hi) }
-.svc-vtab-item.is-active {
-  color: var(--gold);
-  background: rgba(201,152,58,.08);
+.svc-card:hover {
   border-color: var(--gold-dk);
+  box-shadow: 0 6px 36px rgba(201,152,58,.09), 0 1px 4px rgba(0,0,0,.3);
+  transform: translateY(-2px);
 }
 
-.svc-vtab-icon {
-  flex-shrink: 0;
-  display: flex;
-  color: currentColor;
-}
-.svc-vtab-name { flex: 1; line-height: 1.3 }
-.svc-vtab-arrow {
-  width: 14px; height: 14px;
-  flex-shrink: 0;
-  opacity: 0;
-  transition: opacity var(--t);
-}
-.svc-vtab-item.is-active .svc-vtab-arrow { opacity: 1; color: var(--gold) }
-
-/* Right panel */
-.svc-vtab-panel {
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  animation: panelIn .22s ease;
-  overflow-y: auto;
-  max-height: 600px;
-}
-
-/* Panel header: icon badge + title + description */
-.svc-vtab-header {
+/* Card header */
+.svc-card-head {
   display: flex;
   gap: 1rem;
   align-items: flex-start;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--border);
 }
-.svc-vtab-header-icon {
+.svc-card-icon {
   width: 44px; height: 44px;
   flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   border-radius: var(--r-sm);
-  background: rgba(201,152,58,.14);
+  background: rgba(201,152,58,.10);
   border: 1px solid var(--gold-dk);
   color: var(--gold);
 }
-.svc-vtab-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: .35rem }
-.svc-vtab-desc { font-size: .87rem; color: var(--muted); line-height: 1.75 }
+.svc-card-head-text { display: flex; flex-direction: column; gap: .3rem }
+.svc-card-name {
+  font-size: .97rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.svc-card-desc {
+  font-size: .83rem;
+  color: var(--muted);
+  line-height: 1.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
-/* Gallery area */
-.svc-vtab-gallery { display: flex; flex-direction: column; gap: .75rem }
+/* Mini portfolio grid (2×2) */
+.svc-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .4rem;
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.svc-mini-item {
+  position: relative;
+  aspect-ratio: 4/3;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--surface-hi);
+  display: block;
+}
+.svc-mini-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .4s ease;
+}
+.svc-mini-item:hover .svc-mini-img { transform: scale(1.07) }
+.svc-mini-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.78) 0%, transparent 55%);
+  display: flex; align-items: flex-end;
+  padding: .55rem .6rem;
+  opacity: 0;
+  transition: opacity var(--t);
+}
+.svc-mini-item:hover .svc-mini-overlay { opacity: 1 }
+.svc-mini-title {
+  font-size: .7rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+  text-align: left;
+}
+/* +N overflow badge */
+.svc-mini-more {
+  aspect-ratio: 4/3;
+  border: 1px dashed var(--border-hi);
+  background: rgba(201,152,58,.04);
+  color: var(--gold);
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-family: 'Manrope', sans-serif;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--t), border-color var(--t);
+}
+.svc-mini-more:hover { background: rgba(201,152,58,.10); border-color: var(--gold) }
+
+/* Empty state */
+.svc-card-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: .6rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--r);
+  padding: 2rem 1rem;
+  color: var(--muted);
+  font-size: .83rem;
+  text-align: center;
+}
+.svc-card-empty-icon { width: 32px; height: 32px; opacity: .4 }
+
+/* CTAs row */
+.svc-card-ctas {
+  display: flex;
+  gap: .7rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: .25rem;
+  border-top: 1px solid var(--border);
+}
+.btn-outline {
+  display: inline-flex; align-items: center; gap: .4rem;
+  border: 1px solid var(--border-hi);
+  background: transparent;
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 600;
+  padding: .5rem .95rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: border-color var(--t), color var(--t), background var(--t);
+  white-space: nowrap;
+}
+.btn-outline:hover { border-color: var(--gold-dk); color: var(--gold); background: rgba(201,152,58,.06) }
+.svc-cta-icon { width: 13px; height: 13px; flex-shrink: 0 }
+.svc-quote-btn { font-size: .78rem; padding: .5rem 1rem; white-space: nowrap }
+
+/* Works modal overlay */
+.svc-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(5,10,18,.82);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn .18s ease;
+}
+.svc-modal {
+  background: var(--surface);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--r-lg);
+  width: min(820px, 100%);
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 24px 80px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.4);
+  animation: modalUp .22s ease;
+}
+@keyframes modalUp { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: none } }
+.svc-modal-head {
+  display: flex; align-items: center; gap: .85rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.svc-modal-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--r-sm);
+  background: rgba(201,152,58,.12);
+  border: 1px solid var(--gold-dk);
+  color: var(--gold);
+}
+.svc-modal-name { font-size: 1.05rem; font-weight: 700; color: var(--text); flex: 1 }
 
 .works-label {
   font-size: .7rem; font-weight: 700; letter-spacing: .18em;
@@ -737,7 +834,7 @@ a.contact-val:hover { color: var(--gold) }
   .faq-layout { grid-template-columns: 1fr; gap: 2.5rem }
   .faq-left { position: static }
   .contact-layout { grid-template-columns: 1fr; gap: 2.5rem }
-  .svc-vtabs-wrapper { grid-template-columns: 180px 1fr }
+  .svc-cards-grid { grid-template-columns: 1fr }
 }
 
 @media (max-width: 860px) {
@@ -750,12 +847,8 @@ a.contact-val:hover { color: var(--gold) }
   .hero-content { padding-block: 5rem 4rem }
   .hero-title { font-size: clamp(2.8rem, 10vw, 4.5rem) }
 
-  .svc-vtabs-wrapper { grid-template-columns: 1fr; grid-template-rows: auto 1fr }
-  .svc-vtab-list { flex-direction: row; flex-wrap: wrap; border-right: none; border-bottom: 1px solid var(--border) }
-  .svc-vtab-item { flex: 1 1 auto; justify-content: center; gap: .4rem; padding: .65rem .75rem }
-  .svc-vtab-name { display: none }
-  .svc-vtab-arrow { display: none }
-  .svc-vtab-panel { max-height: none }
+  .svc-card-ctas { flex-direction: column; align-items: stretch }
+  .btn-outline, .svc-quote-btn { text-align: center; justify-content: center }
 
   .values-grid { grid-template-columns: 1fr 1fr }
   .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) }
