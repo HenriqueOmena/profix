@@ -39,12 +39,6 @@ const STORAGE_KEY = 'profix-services-v3'
 const AUTH_KEY    = 'profix-authenticated'
 const WHATSAPP    = 'https://wa.me/351936284583'
 
-const SERVICE_PHOTO: Record<string, string> = {
-  repairs:     IMG.repairs,
-  painting:    IMG.painting,
-  renovation:  IMG.renovation,
-  engineering: IMG.engineering,
-}
 
 /* ─── Default services (pre-populated) ───────────────────── */
 const DEFAULT_SERVICES: ServiceItem[] = [
@@ -231,7 +225,6 @@ function ServicesSection({
   const [activeId, setActiveId] = useState(services[0]?.id ?? '')
   const active = services.find(s => s.id === activeId) ?? services[0]
 
-  // Keep activeId in sync if services change (e.g. deleted)
   useEffect(() => {
     if (!services.find(s => s.id === activeId) && services.length > 0) {
       setActiveId(services[0].id)
@@ -249,75 +242,78 @@ function ServicesSection({
           <p className="section-sub">{t('services.subtitle')}</p>
         </div>
 
-        {/* Tab bar */}
-        <div className="svc-tab-bar" role="tablist" aria-label="Serviços">
-          {services.map(svc => (
-            <button
-              key={svc.id}
-              role="tab"
-              aria-selected={svc.id === activeId}
-              aria-controls="svc-panel"
-              className={`svc-tab ${svc.id === activeId ? 'is-active' : ''}`}
-              onClick={() => setActiveId(svc.id)}
-              type="button"
-            >
-              <span className="svc-tab-icon-wrap">
-                {SERVICE_ICONS[svc.id] ?? <IconBuilding />}
-              </span>
-              <span className="svc-tab-label">{svc.name}</span>
-            </button>
-          ))}
-        </div>
+        {/* Vertical tabs wrapper */}
+        <div className="svc-vtabs-wrapper">
 
-        {/* Panel */}
-        <div id="svc-panel" className="svc-panel" key={activeId} role="tabpanel">
-          {/* Left: photo + info */}
-          <div className="svc-panel-left">
-            <div className="svc-panel-photo-wrap">
-              <img
-                src={SERVICE_PHOTO[active.id] ?? IMG.engineering}
-                alt={active.name}
-                className="svc-panel-photo"
-              />
-              <div className="svc-panel-photo-badge">
-                <span className="svc-tab-icon-wrap svc-tab-icon-lg">
-                  {SERVICE_ICONS[active.id] ?? <IconBuilding />}
+          {/* Left: vertical tab list */}
+          <div className="svc-vtab-list" role="tablist" aria-label="Serviços">
+            {services.map(svc => (
+              <button
+                key={svc.id}
+                role="tab"
+                aria-selected={svc.id === activeId}
+                aria-controls="svc-vtab-panel"
+                className={`svc-vtab-item ${svc.id === activeId ? 'is-active' : ''}`}
+                onClick={() => setActiveId(svc.id)}
+                type="button"
+              >
+                <span className="svc-vtab-icon">
+                  {SERVICE_ICONS[svc.id] ?? <IconBuilding />}
                 </span>
+                <span className="svc-vtab-name">{svc.name}</span>
+                <svg className="svc-vtab-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            ))}
+          </div>
+
+          {/* Right: content panel */}
+          <div id="svc-vtab-panel" className="svc-vtab-panel" key={activeId} role="tabpanel">
+            {/* Header: name + description */}
+            <div className="svc-vtab-header">
+              <div className="svc-vtab-header-icon">
+                {SERVICE_ICONS[active.id] ?? <IconBuilding />}
+              </div>
+              <div>
+                <h3 className="svc-vtab-title">{active.name}</h3>
+                <p className="svc-vtab-desc">{active.description}</p>
               </div>
             </div>
-            <div className="svc-panel-info">
-              <h3 className="svc-panel-name">{active.name}</h3>
-              <p className="svc-panel-desc">{active.description}</p>
+
+            {/* Gallery */}
+            <div className="svc-vtab-gallery">
+              <p className="works-label">{t('portfolio.title')}</p>
+
+              {active.works.length === 0 ? (
+                <div className="gallery-empty">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="gallery-empty-icon">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                  </svg>
+                  <p>{t('portfolio.empty')}</p>
+                </div>
+              ) : (
+                <div className="gallery-grid">
+                  {active.works.map(work => (
+                    <button
+                      key={work.id}
+                      className="gallery-item"
+                      onClick={() => onImageClick(work.imageData)}
+                      type="button"
+                      aria-label={work.title}
+                    >
+                      <img src={work.imageData} alt={work.title} className="gallery-img" />
+                      <div className="gallery-overlay">
+                        <p className="gallery-item-title">{work.title}</p>
+                        <p className="gallery-item-desc">{work.description}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Right: gallery */}
-          <div className="svc-panel-right">
-            <p className="works-label">{t('portfolio.title')}</p>
-            {active.works.length === 0 ? (
-              <div className="gallery-empty">
-                <p>{t('portfolio.empty')}</p>
-              </div>
-            ) : (
-              <div className="gallery-grid">
-                {active.works.map(work => (
-                  <button
-                    key={work.id}
-                    className="gallery-item"
-                    onClick={() => onImageClick(work.imageData)}
-                    type="button"
-                    aria-label={work.title}
-                  >
-                    <img src={work.imageData} alt={work.title} className="gallery-img" />
-                    <div className="gallery-overlay">
-                      <p className="gallery-item-title">{work.title}</p>
-                      <p className="gallery-item-desc">{work.description}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </section>

@@ -346,100 +346,102 @@ img { display: block; max-width: 100% }
 .value-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: .25rem }
 .value-text { font-size: .8rem; color: var(--muted); line-height: 1.6 }
 
-/* ─── Services — Tab Layout ──────────────────────────────── */
+/* ─── Services — Vertical Tabs Layout ───────────────────── */
 .svc-icon { width: 20px; height: 20px }
 
-/* Tab bar */
-.svc-tab-bar {
-  display: flex;
-  gap: 0;
-  border-bottom: 2px solid var(--border);
-  margin-bottom: 2.5rem;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.svc-tab-bar::-webkit-scrollbar { display: none }
+@keyframes panelIn { from { opacity: 0; transform: translateX(8px) } to { opacity: 1; transform: none } }
 
-.svc-tab {
+/* Outer wrapper: sidebar | panel */
+.svc-vtabs-wrapper {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--surface);
+  min-height: 420px;
+}
+
+/* Left sidebar — list of service buttons */
+.svc-vtab-list {
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
+  padding: .5rem;
+  gap: .2rem;
+  background: var(--bg);
+}
+
+.svc-vtab-item {
+  display: flex;
   align-items: center;
-  gap: .4rem;
-  padding: .9rem 1.4rem;
-  border: none;
+  gap: .7rem;
+  padding: .85rem .9rem;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
   background: transparent;
   color: var(--muted);
   font-size: .82rem;
   font-weight: 600;
-  letter-spacing: .01em;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-  transition: color var(--t), border-color var(--t);
-  white-space: nowrap;
-  flex-shrink: 0;
+  text-align: left;
   cursor: pointer;
+  transition: color var(--t), background var(--t), border-color var(--t);
+  width: 100%;
 }
-.svc-tab:hover { color: var(--text) }
-.svc-tab.is-active { color: var(--gold); border-bottom-color: var(--gold) }
-.svc-tab.is-active .svc-tab-icon-wrap { background: rgba(201,152,58,.12); border-color: var(--gold-dk) }
+.svc-vtab-item:hover { color: var(--text); background: var(--surface-hi) }
+.svc-vtab-item.is-active {
+  color: var(--gold);
+  background: rgba(201,152,58,.08);
+  border-color: var(--gold-dk);
+}
 
-.svc-tab-icon-wrap {
-  width: 40px; height: 40px;
+.svc-vtab-icon {
+  flex-shrink: 0;
+  display: flex;
+  color: currentColor;
+}
+.svc-vtab-name { flex: 1; line-height: 1.3 }
+.svc-vtab-arrow {
+  width: 14px; height: 14px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity var(--t);
+}
+.svc-vtab-item.is-active .svc-vtab-arrow { opacity: 1; color: var(--gold) }
+
+/* Right panel */
+.svc-vtab-panel {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: panelIn .22s ease;
+  overflow-y: auto;
+  max-height: 600px;
+}
+
+/* Panel header: icon badge + title + description */
+.svc-vtab-header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.svc-vtab-header-icon {
+  width: 44px; height: 44px;
+  flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   border-radius: var(--r-sm);
-  background: rgba(255,255,255,.04);
-  border: 1px solid var(--border);
-  color: currentColor;
-  transition: background var(--t), border-color var(--t);
-  flex-shrink: 0;
+  background: rgba(201,152,58,.14);
+  border: 1px solid var(--gold-dk);
+  color: var(--gold);
 }
-.svc-tab-label {
-  font-size: .76rem;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1.3;
-  max-width: 120px;
-}
+.svc-vtab-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: .35rem }
+.svc-vtab-desc { font-size: .87rem; color: var(--muted); line-height: 1.75 }
 
-/* Panel */
-.svc-panel {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 2.5rem;
-  align-items: start;
-  animation: panelIn .22s ease;
-}
-@keyframes panelIn { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
-
-.svc-panel-left { display: flex; flex-direction: column; gap: 1.25rem }
-
-.svc-panel-photo-wrap {
-  position: relative;
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  aspect-ratio: 4/3;
-  border: 1px solid var(--border-hi);
-}
-.svc-panel-photo { width: 100%; height: 100%; object-fit: cover }
-
-.svc-panel-photo-badge {
-  position: absolute;
-  top: 1rem; left: 1rem;
-}
-.svc-tab-icon-lg {
-  width: 48px !important;
-  height: 48px !important;
-  background: rgba(201,152,58,.9) !important;
-  border: none !important;
-  color: #100d04 !important;
-}
-
-.svc-panel-info { display: flex; flex-direction: column; gap: .5rem }
-.svc-panel-name { font-size: 1.05rem; font-weight: 700; color: var(--text); line-height: 1.3 }
-.svc-panel-desc { font-size: .88rem; color: var(--muted); line-height: 1.75 }
-
-/* Panel right — gallery */
-.svc-panel-right { display: flex; flex-direction: column; gap: .75rem }
+/* Gallery area */
+.svc-vtab-gallery { display: flex; flex-direction: column; gap: .75rem }
 
 .works-label {
   font-size: .7rem; font-weight: 700; letter-spacing: .18em;
@@ -735,8 +737,7 @@ a.contact-val:hover { color: var(--gold) }
   .faq-layout { grid-template-columns: 1fr; gap: 2.5rem }
   .faq-left { position: static }
   .contact-layout { grid-template-columns: 1fr; gap: 2.5rem }
-  .svc-panel { grid-template-columns: 1fr; gap: 2rem }
-  .svc-panel-photo-wrap { aspect-ratio: 16/9 }
+  .svc-vtabs-wrapper { grid-template-columns: 180px 1fr }
 }
 
 @media (max-width: 860px) {
@@ -749,8 +750,12 @@ a.contact-val:hover { color: var(--gold) }
   .hero-content { padding-block: 5rem 4rem }
   .hero-title { font-size: clamp(2.8rem, 10vw, 4.5rem) }
 
-  .svc-tab-label { display: none }
-  .svc-tab { padding: .75rem 1rem }
+  .svc-vtabs-wrapper { grid-template-columns: 1fr; grid-template-rows: auto 1fr }
+  .svc-vtab-list { flex-direction: row; flex-wrap: wrap; border-right: none; border-bottom: 1px solid var(--border) }
+  .svc-vtab-item { flex: 1 1 auto; justify-content: center; gap: .4rem; padding: .65rem .75rem }
+  .svc-vtab-name { display: none }
+  .svc-vtab-arrow { display: none }
+  .svc-vtab-panel { max-height: none }
 
   .values-grid { grid-template-columns: 1fr 1fr }
   .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) }
@@ -765,5 +770,4 @@ a.contact-val:hover { color: var(--gold) }
   .contact-cta-card { padding: 1.5rem }
   .footer-inner { flex-direction: column; align-items: flex-start; gap: 1rem }
   .gallery-grid { grid-template-columns: repeat(2, 1fr) }
-  .svc-tab { padding: .6rem .75rem }
 }
