@@ -20,12 +20,12 @@ type ServiceItem = {
   works: WorkItem[]
 }
 
-/* ─── CDN Images (from profixmadeira.manus.space) ────────── */
+/* ─── CDN Images ─────────────────────────────────────────── */
 const CDN = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663329997620'
 const IMG = {
   hero:       `${CDN}/wLsmmQYLwyBEYZJG.jpg`,
   texture:    `${CDN}/DeCvLWFEBkSqRGsb.jpg`,
-  about:      `${CDN}/qibLzoMgJGFDMOxe.jpeg`,
+  about:      `${CDN}/miQnEEeDSmiFYpgB.jpeg`,   // portrait renovation photo
   repairs:    `${CDN}/oZepugZbFecnMfPJ.jpg`,
   painting:   `${CDN}/zWxKZUbnJcQsUoHq.jpg`,
   renovation: `${CDN}/CHCgVzpzvYOasoJp.jpeg`,
@@ -39,7 +39,6 @@ const STORAGE_KEY = 'profix-services-v3'
 const AUTH_KEY    = 'profix-authenticated'
 const WHATSAPP    = 'https://wa.me/351936284583'
 
-/* ─── Service image map ──────────────────────────────────── */
 const SERVICE_PHOTO: Record<string, string> = {
   repairs:     IMG.repairs,
   painting:    IMG.painting,
@@ -47,7 +46,7 @@ const SERVICE_PHOTO: Record<string, string> = {
   engineering: IMG.engineering,
 }
 
-/* ─── Default data (pre-populated with real photos) ─────── */
+/* ─── Default services (pre-populated) ───────────────────── */
 const DEFAULT_SERVICES: ServiceItem[] = [
   {
     id: 'repairs',
@@ -102,16 +101,12 @@ const fileToDataUrl = (file: File): Promise<string> =>
     reader.readAsDataURL(file)
   })
 
-/* ─── Logo SVG ───────────────────────────────────────────── */
+/* ─── Logo ───────────────────────────────────────────────── */
 function ProFixLogo({ small = false }: { small?: boolean }) {
   return (
-    <svg
-      viewBox="0 0 280 96"
-      aria-label="ProFix Madeira"
+    <svg viewBox="0 0 280 96" aria-label="ProFix Madeira"
       style={{ height: small ? '40px' : '52px', width: 'auto' }}
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+      fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="280" height="96" rx="18" fill="#0d1a27" />
       <rect x="28" y="14" width="224" height="2" rx="1" fill="#c9983a" />
       <text x="140" y="60" textAnchor="middle" fill="#e6edf3"
@@ -142,28 +137,21 @@ function LangDropdown() {
 
   return (
     <div className="lang-dd" ref={ref}>
-      <button
-        className="lang-dd-trigger"
-        onClick={() => setOpen(p => !p)}
-        type="button"
-        aria-expanded={open}
-        aria-haspopup="listbox"
-      >
+      <button className="lang-dd-trigger" onClick={() => setOpen(p => !p)}
+        type="button" aria-expanded={open} aria-haspopup="listbox">
         <span className="lang-flag">{current.flag}</span>
         <span className="lang-name">{current.name}</span>
-        <svg className={`lang-chevron ${open ? 'is-open' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <svg className={`lang-chevron ${open ? 'is-open' : ''}`} viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" strokeWidth="2.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
       {open && (
-        <ul className="lang-dd-menu" role="listbox" aria-label="Select language">
+        <ul className="lang-dd-menu" role="listbox">
           {LANG_OPTIONS.map(opt => (
             <li key={opt.code} role="option" aria-selected={opt.code === i18n.language}>
-              <button
-                className={`lang-dd-item ${opt.code === i18n.language ? 'is-active' : ''}`}
-                onClick={() => { i18n.changeLanguage(opt.code); setOpen(false) }}
-                type="button"
-              >
+              <button className={`lang-dd-item ${opt.code === i18n.language ? 'is-active' : ''}`}
+                onClick={() => { i18n.changeLanguage(opt.code); setOpen(false) }} type="button">
                 <span className="lang-flag">{opt.flag}</span>
                 <span>{opt.name}</span>
                 {opt.code === i18n.language && (
@@ -210,24 +198,129 @@ function IconBuilding() {
   )
 }
 const SERVICE_ICONS: Record<string, React.ReactElement> = {
-  repairs: <IconWrench />,
-  painting: <IconBrush />,
-  renovation: <IconHome />,
+  repairs:     <IconWrench />,
+  painting:    <IconBrush />,
+  renovation:  <IconHome />,
   engineering: <IconBuilding />,
 }
 
 /* ─── Lightbox ───────────────────────────────────────────── */
 function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
   useEffect(() => {
-    const handler = (e: globalThis.KeyboardEvent) => { if (e.key === 'Escape') onClose() }
-    document.addEventListener('keydown', handler)
-    return () => document.removeEventListener('keydown', handler)
+    const h = (e: globalThis.KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', h)
+    return () => document.removeEventListener('keydown', h)
   }, [onClose])
   return (
     <div className="lightbox-overlay" onClick={onClose} role="dialog" aria-modal="true">
       <button className="lightbox-close" onClick={onClose} aria-label="Fechar">✕</button>
       <img src={src} alt="" className="lightbox-img" onClick={e => e.stopPropagation()} />
     </div>
+  )
+}
+
+/* ─── Services Tabs Component ────────────────────────────── */
+function ServicesSection({
+  services,
+  onImageClick,
+}: {
+  services: ServiceItem[]
+  onImageClick: (src: string) => void
+}) {
+  const { t } = useTranslation()
+  const [activeId, setActiveId] = useState(services[0]?.id ?? '')
+  const active = services.find(s => s.id === activeId) ?? services[0]
+
+  // Keep activeId in sync if services change (e.g. deleted)
+  useEffect(() => {
+    if (!services.find(s => s.id === activeId) && services.length > 0) {
+      setActiveId(services[0].id)
+    }
+  }, [services, activeId])
+
+  if (!active) return null
+
+  return (
+    <section id="services" className="section section-alt">
+      <div className="page-wrap">
+        <div className="section-header">
+          <p className="eyebrow">{t('nav.services')}</p>
+          <h2 className="section-title">{t('services.title')}</h2>
+          <p className="section-sub">{t('services.subtitle')}</p>
+        </div>
+
+        {/* Tab bar */}
+        <div className="svc-tab-bar" role="tablist" aria-label="Serviços">
+          {services.map(svc => (
+            <button
+              key={svc.id}
+              role="tab"
+              aria-selected={svc.id === activeId}
+              aria-controls="svc-panel"
+              className={`svc-tab ${svc.id === activeId ? 'is-active' : ''}`}
+              onClick={() => setActiveId(svc.id)}
+              type="button"
+            >
+              <span className="svc-tab-icon-wrap">
+                {SERVICE_ICONS[svc.id] ?? <IconBuilding />}
+              </span>
+              <span className="svc-tab-label">{svc.name}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Panel */}
+        <div id="svc-panel" className="svc-panel" key={activeId} role="tabpanel">
+          {/* Left: photo + info */}
+          <div className="svc-panel-left">
+            <div className="svc-panel-photo-wrap">
+              <img
+                src={SERVICE_PHOTO[active.id] ?? IMG.engineering}
+                alt={active.name}
+                className="svc-panel-photo"
+              />
+              <div className="svc-panel-photo-badge">
+                <span className="svc-tab-icon-wrap svc-tab-icon-lg">
+                  {SERVICE_ICONS[active.id] ?? <IconBuilding />}
+                </span>
+              </div>
+            </div>
+            <div className="svc-panel-info">
+              <h3 className="svc-panel-name">{active.name}</h3>
+              <p className="svc-panel-desc">{active.description}</p>
+            </div>
+          </div>
+
+          {/* Right: gallery */}
+          <div className="svc-panel-right">
+            <p className="works-label">{t('portfolio.title')}</p>
+            {active.works.length === 0 ? (
+              <div className="gallery-empty">
+                <p>{t('portfolio.empty')}</p>
+              </div>
+            ) : (
+              <div className="gallery-grid">
+                {active.works.map(work => (
+                  <button
+                    key={work.id}
+                    className="gallery-item"
+                    onClick={() => onImageClick(work.imageData)}
+                    type="button"
+                    aria-label={work.title}
+                  >
+                    <img src={work.imageData} alt={work.title} className="gallery-img" />
+                    <div className="gallery-overlay">
+                      <p className="gallery-item-title">{work.title}</p>
+                      <p className="gallery-item-desc">{work.description}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -251,7 +344,6 @@ function AdminDrawer(p: AdminProps) {
   const { t } = useTranslation()
   const [tab, setTab] = useState<'categories' | 'works'>('categories')
   const fileRef = useRef<HTMLInputElement>(null)
-
   const onKey = useCallback((e: KeyboardEvent<HTMLElement>) => { if (e.key === 'Escape') p.onClose() }, [p])
 
   return (
@@ -316,7 +408,8 @@ function AdminDrawer(p: AdminProps) {
 
             {tab === 'works' && (
               <div className="admin-tab-content">
-                <form className="admin-form" onSubmit={e => { p.onAddWork(e); if (fileRef.current) fileRef.current.value = '' }}>
+                <form className="admin-form"
+                  onSubmit={e => { p.onAddWork(e); if (fileRef.current) fileRef.current.value = '' }}>
                   <h3 className="admin-form-title">{t('admin.newWork')}</h3>
                   <label className="field-label">{t('admin.selectCategory')}</label>
                   <select className="field-input" value={p.newWork.serviceId}
@@ -419,27 +512,21 @@ export default function App() {
       setIsAuthenticated(true); setLoginError(''); localStorage.setItem(AUTH_KEY, 'true')
     } else { setLoginError(t('admin.invalidCredentials')) }
   }
-
   const handleLogout = () => { setIsAuthenticated(false); localStorage.removeItem(AUTH_KEY) }
-
   const addCategory = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!newCategory.name.trim() || !newCategory.description.trim()) return
     setServices(p => [...p, { id: crypto.randomUUID(), name: newCategory.name.trim(), description: newCategory.description.trim(), works: [] }])
     setNewCategory({ name: '', description: '' })
   }
-
   const deleteService = (id: string) => setServices(p => p.filter(s => s.id !== id))
-
   const onWorkImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     if (!file.type.startsWith('image/')) { setImageError(t('admin.imageTypeError')); return }
-    setNewWork(w => ({ ...w, imageData: '' }))
     const data = await fileToDataUrl(file)
     setNewWork(w => ({ ...w, imageData: data })); setImageError('')
   }
-
   const addWork = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!newWork.title.trim() || !newWork.description.trim() || !newWork.imageData) return
@@ -450,7 +537,6 @@ export default function App() {
     ))
     setNewWork(w => ({ ...w, title: '', description: '', imageData: '' }))
   }
-
   const deleteWork = (serviceId: string, workId: string) =>
     setServices(p => p.map(svc => svc.id === serviceId ? { ...svc, works: svc.works.filter(w => w.id !== workId) } : svc))
 
@@ -466,6 +552,8 @@ export default function App() {
     { n: '03', title: t('values.detalheTitle'), text: t('values.detalheText') },
     { n: '04', title: t('values.comunicacaoTitle'), text: t('values.comunicacaoText') },
   ]
+
+  const navLinks = ['about', 'services', 'faq', 'contact'] as const
 
   return (
     <>
@@ -489,13 +577,11 @@ export default function App() {
           <a href="#hero" className="nav-logo-link" aria-label="ProFix Madeira">
             <ProFixLogo />
           </a>
-
           <nav className="nav-links" aria-label="Main">
-            {(['about','services','portfolio','faq','contact'] as const).map(k => (
+            {navLinks.map(k => (
               <a key={k} href={`#${k}`} className="nav-link" onClick={() => setNavOpen(false)}>{t(`nav.${k}`)}</a>
             ))}
           </nav>
-
           <div className="nav-right">
             <LangDropdown />
             <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold nav-wa-btn">
@@ -504,14 +590,15 @@ export default function App() {
               </svg>
               WhatsApp
             </a>
-            <button className={`hamburger ${navOpen ? 'is-open' : ''}`} onClick={() => setNavOpen(p => !p)} aria-label="Menu" type="button">
+            <button className={`hamburger ${navOpen ? 'is-open' : ''}`}
+              onClick={() => setNavOpen(p => !p)} aria-label="Menu" type="button">
               <span /><span /><span />
             </button>
           </div>
         </div>
 
         <div className={`mobile-menu ${navOpen ? 'is-open' : ''}`}>
-          {(['about','services','portfolio','faq','contact'] as const).map(k => (
+          {navLinks.map(k => (
             <a key={k} href={`#${k}`} className="mobile-link" onClick={() => setNavOpen(false)}>{t(`nav.${k}`)}</a>
           ))}
           <div className="mobile-lang-row">
@@ -532,31 +619,22 @@ export default function App() {
       <main>
         {/* ── Hero ─────────────────────────────────────────── */}
         <section id="hero" className="hero-section"
-          style={{ backgroundImage: `linear-gradient(135deg, rgba(10,20,30,0.93) 0%, rgba(13,26,39,0.72) 55%, rgba(10,20,30,0.92) 100%), url(${IMG.hero})` }}>
+          style={{ backgroundImage: `linear-gradient(135deg, rgba(10,20,30,0.93) 0%, rgba(13,26,39,0.68) 55%, rgba(10,20,30,0.92) 100%), url(${IMG.hero})` }}>
           <div className="hero-texture" style={{ backgroundImage: `url(${IMG.texture})` }} aria-hidden="true" />
           <div className="hero-content page-wrap">
-            <div className="hero-left">
-              <p className="eyebrow">{t('hero.kicker')}</p>
-              <h1 className="hero-title">
-                {t('hero.title').split('\n').map((line, i, arr) => (
-                  <span key={i} className={i === arr.length - 1 ? 'hero-line gold' : 'hero-line'}>{line}</span>
-                ))}
-              </h1>
-              <p className="hero-sub">{t('hero.subtitle')}</p>
-              <div className="hero-cta">
-                <a className="btn-gold btn-large" href={WHATSAPP} target="_blank" rel="noreferrer">{t('actions.requestQuote')}</a>
-                <a className="btn-ghost" href="#services">{t('actions.exploreServices')}</a>
-              </div>
-            </div>
-            <div className="hero-right">
-              <div className="stats-card">
-                <div className="stat-item"><span className="stat-num">98%</span><span className="stat-lbl">{t('highlights.quality')}</span></div>
-                <hr className="stat-hr" />
-                <div className="stat-item"><span className="stat-num">24h</span><span className="stat-lbl">{t('highlights.response')}</span></div>
-                <hr className="stat-hr" />
-                <div className="stat-item"><span className="stat-num">Madeira</span><span className="stat-lbl">{t('highlights.coverage')}</span></div>
-              </div>
-            </div>
+            <p className="eyebrow">{t('hero.kicker')}</p>
+            <h1 className="hero-title">
+              {t('hero.title').split('\n').map((line, i, arr) => (
+                <span key={i} className={i === arr.length - 1 ? 'hero-line gold' : 'hero-line'}>{line}</span>
+              ))}
+            </h1>
+            <p className="hero-sub">{t('hero.subtitle')}</p>
+            <a className="btn-gold btn-large hero-cta-btn" href={WHATSAPP} target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" fill="currentColor" className="wa-icon">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+              </svg>
+              {t('actions.requestQuote')}
+            </a>
           </div>
           <div className="hero-gold-bar" aria-hidden="true" />
         </section>
@@ -564,7 +642,14 @@ export default function App() {
         {/* ── About ────────────────────────────────────────── */}
         <section id="about" className="section page-wrap">
           <div className="about-grid">
-            <div className="about-left">
+            <div className="about-photo-wrap">
+              <img src={IMG.about} alt="Trabalho ProFix Madeira" className="about-photo" />
+              <div className="about-photo-badge">
+                <span className="badge-num">+10</span>
+                <span className="badge-lbl">anos<br />experiência</span>
+              </div>
+            </div>
+            <div className="about-right">
               <p className="eyebrow">{t('nav.about')}</p>
               <h2 className="section-title">{t('about.title')}</h2>
               <p className="body-text">{t('about.text')}</p>
@@ -579,70 +664,11 @@ export default function App() {
                 ))}
               </div>
             </div>
-            <div className="about-photo-wrap">
-              <img src={IMG.about} alt="Equipa ProFix Madeira" className="about-photo" />
-              <div className="about-photo-badge">
-                <span className="badge-num">+10</span>
-                <span className="badge-lbl">anos<br/>experiência</span>
-              </div>
-            </div>
           </div>
         </section>
 
-        {/* ── Services + Portfolio ──────────────────────────── */}
-        <section id="services" className="section section-alt">
-          <div className="page-wrap">
-            <div className="section-header">
-              <p className="eyebrow">{t('nav.services')}</p>
-              <h2 className="section-title">{t('services.title')}</h2>
-              <p className="section-sub">{t('services.subtitle')}</p>
-            </div>
-            <div id="portfolio" className="services-grid">
-              {services.map(svc => (
-                <article key={svc.id} className="svc-card">
-                  {/* Photo header */}
-                  <div className="svc-photo-wrap">
-                    <img
-                      src={SERVICE_PHOTO[svc.id] ?? IMG.engineering}
-                      alt={svc.name}
-                      className="svc-photo"
-                    />
-                    <div className="svc-photo-overlay">
-                      <div className="svc-icon-badge">
-                        {SERVICE_ICONS[svc.id] ?? <IconBuilding />}
-                      </div>
-                    </div>
-                  </div>
-                  {/* Card body */}
-                  <div className="svc-body">
-                    <h3 className="svc-name">{svc.name}</h3>
-                    <p className="svc-desc">{svc.description}</p>
-                    {svc.works.length > 0 ? (
-                      <div className="works-section">
-                        <p className="works-label">{t('portfolio.title')}</p>
-                        <div className="works-grid">
-                          {svc.works.map(work => (
-                            <button key={work.id} className="work-thumb-btn"
-                              onClick={() => setLightboxSrc(work.imageData)}
-                              type="button" aria-label={work.title}>
-                              <img src={work.imageData} alt={work.title} className="work-img" />
-                              <div className="work-overlay">
-                                <p className="work-overlay-title">{work.title}</p>
-                                <p className="work-overlay-desc">{work.description}</p>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="works-empty">{t('portfolio.empty')}</p>
-                    )}
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* ── Services (tabs + gallery) ─────────────────────── */}
+        <ServicesSection services={services} onImageClick={setLightboxSrc} />
 
         {/* ── FAQ ──────────────────────────────────────────── */}
         <section id="faq" className="section page-wrap">
@@ -650,8 +676,8 @@ export default function App() {
             <div className="faq-left">
               <p className="eyebrow">FAQ</p>
               <h2 className="section-title">{t('faq.title')}</h2>
-              <p className="body-text faq-intro">{t('contact.ctaSub')}</p>
-              <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold" style={{marginTop:'1rem', alignSelf:'flex-start'}}>
+              <p className="body-text" style={{ fontSize: '.95rem', marginTop: '.25rem' }}>{t('contact.ctaSub')}</p>
+              <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold" style={{ marginTop: '1rem', alignSelf: 'flex-start' }}>
                 {t('actions.freeQuote')}
               </a>
             </div>
