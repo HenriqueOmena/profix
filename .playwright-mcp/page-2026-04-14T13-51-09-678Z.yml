@@ -1,0 +1,210 @@
+- generic [ref=e2]:
+  - dialog "Área de gestão" [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Área de gestão" [level=2] [ref=e5]
+      - button "Fechar" [ref=e6] [cursor=pointer]: ✕
+    - generic [ref=e8]:
+      - generic [ref=e9]: Utilizador
+      - textbox "admin" [ref=e10]
+      - generic [ref=e11]: Palavra-passe
+      - textbox "••••••••" [ref=e12]
+      - button "Entrar" [ref=e13] [cursor=pointer]
+      - paragraph [ref=e14]: "Demo: admin / profix123"
+  - banner [ref=e15]:
+    - generic [ref=e16]:
+      - link "ProFix Madeira" [ref=e17] [cursor=pointer]:
+        - /url: "#hero"
+        - img "ProFix Madeira" [ref=e18]:
+          - generic [ref=e21]: ProFix
+          - generic [ref=e22]: MADEIRA
+      - navigation "Main" [ref=e24]:
+        - link "Sobre nós" [ref=e25] [cursor=pointer]:
+          - /url: "#about"
+        - link "Serviços" [ref=e26] [cursor=pointer]:
+          - /url: "#services"
+        - link "Portfólio" [ref=e27] [cursor=pointer]:
+          - /url: "#portfolio"
+        - link "FAQ" [ref=e28] [cursor=pointer]:
+          - /url: "#faq"
+        - link "Contacto" [ref=e29] [cursor=pointer]:
+          - /url: "#contact"
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - button "PT" [ref=e32] [cursor=pointer]
+          - button "EN" [ref=e33] [cursor=pointer]
+          - button "DE" [ref=e34] [cursor=pointer]
+          - button "FR" [ref=e35] [cursor=pointer]
+        - link "WhatsApp" [ref=e36] [cursor=pointer]:
+          - /url: https://wa.me/351936284583
+          - img [ref=e37]
+          - text: WhatsApp
+    - generic [ref=e39]:
+      - link "Sobre nós" [ref=e40] [cursor=pointer]:
+        - /url: "#about"
+      - link "Serviços" [ref=e41] [cursor=pointer]:
+        - /url: "#services"
+      - link "Portfólio" [ref=e42] [cursor=pointer]:
+        - /url: "#portfolio"
+      - link "FAQ" [ref=e43] [cursor=pointer]:
+        - /url: "#faq"
+      - link "Contacto" [ref=e44] [cursor=pointer]:
+        - /url: "#contact"
+      - generic [ref=e45]:
+        - button "PT" [ref=e46] [cursor=pointer]
+        - button "EN" [ref=e47] [cursor=pointer]
+        - button "DE" [ref=e48] [cursor=pointer]
+        - button "FR" [ref=e49] [cursor=pointer]
+      - link "WhatsApp" [ref=e50] [cursor=pointer]:
+        - /url: https://wa.me/351936284583
+  - main [ref=e51]:
+    - generic [ref=e54]:
+      - generic [ref=e55]:
+        - paragraph [ref=e56]: Reformas & Serviços · Madeira
+        - heading "Precisão em cada detalhe." [level=1] [ref=e57]:
+          - generic [ref=e58]: Precisão
+          - generic [ref=e59]: em cada
+          - generic [ref=e60]: detalhe.
+        - paragraph [ref=e61]: Especialistas em engenharia civil, reparações, manutenção técnica e reabilitação de imóveis na Região Autónoma da Madeira.
+        - generic [ref=e62]:
+          - link "Pedir orçamento gratuito" [ref=e63] [cursor=pointer]:
+            - /url: https://wa.me/351936284583
+          - link "Ver serviços" [ref=e64] [cursor=pointer]:
+            - /url: "#services"
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - generic [ref=e68]: 98%
+          - generic [ref=e69]: rigor técnico
+        - separator [ref=e70]
+        - generic [ref=e71]:
+          - generic [ref=e72]: 24h
+          - generic [ref=e73]: resposta em 24h
+        - separator [ref=e74]
+        - generic [ref=e75]:
+          - generic [ref=e76]: Madeira
+          - generic [ref=e77]: atuação regional
+    - generic [ref=e80]:
+      - generic [ref=e81]:
+        - paragraph [ref=e82]: Sobre nós
+        - heading "Sobre a ProFix Madeira" [level=2] [ref=e83]
+        - paragraph [ref=e84]: A ProFix Madeira é a marca comercial da Gonçalves & Vargens, Lda. Focamo-nos em intervenções técnicas, organizadas e orientadas para a qualidade final do imóvel — desde pequenas reparações até projetos de remodelação completa.
+        - generic [ref=e85]: "NIF: 518 795 306"
+      - generic [ref=e86]:
+        - generic [ref=e87]:
+          - generic [ref=e88]: "01"
+          - heading "Rigor técnico" [level=3] [ref=e89]
+          - paragraph [ref=e90]: Avaliação técnica rigorosa antes de cada execução, garantindo a solução certa.
+        - generic [ref=e91]:
+          - generic [ref=e92]: "02"
+          - heading "Prazos respeitados" [level=3] [ref=e93]
+          - paragraph [ref=e94]: Cumprimos os prazos acordados. A sua tranquilidade é a nossa responsabilidade.
+        - generic [ref=e95]:
+          - generic [ref=e96]: "03"
+          - heading "Atenção ao detalhe" [level=3] [ref=e97]
+          - paragraph [ref=e98]: Execução cuidadosa e precisa em cada fase do trabalho.
+        - generic [ref=e99]:
+          - generic [ref=e100]: "04"
+          - heading "Comunicação clara" [level=3] [ref=e101]
+          - paragraph [ref=e102]: Informação objetiva e transparente durante todo o processo.
+    - generic [ref=e104]:
+      - generic [ref=e105]:
+        - paragraph [ref=e106]: Serviços
+        - heading "O que fazemos" [level=2] [ref=e107]
+        - paragraph [ref=e108]: Categorias integradas para todas as necessidades do seu imóvel.
+      - generic [ref=e109]:
+        - article [ref=e110]:
+          - generic [ref=e111]:
+            - img [ref=e113]
+            - generic [ref=e115]:
+              - heading "Reparações e Manutenção Técnica" [level=3] [ref=e116]
+              - paragraph [ref=e117]: Pequenos serviços elétricos, intervenções de canalização, ajustes e correções funcionais em habitações e espaços comerciais.
+          - paragraph [ref=e118]: Ainda não existem trabalhos publicados nesta categoria.
+        - article [ref=e119]:
+          - generic [ref=e120]:
+            - img [ref=e122]
+            - generic [ref=e124]:
+              - heading "Pintura e Acabamentos" [level=3] [ref=e125]
+              - paragraph [ref=e126]: Pintura interior e exterior, retoques e correção de imperfeições para melhorar a estética dos espaços.
+          - paragraph [ref=e127]: Ainda não existem trabalhos publicados nesta categoria.
+        - article [ref=e128]:
+          - generic [ref=e129]:
+            - img [ref=e131]
+            - generic [ref=e133]:
+              - heading "Reformas e Remodelações" [level=3] [ref=e134]
+              - paragraph [ref=e135]: Reformas parciais ou completas de casas e apartamentos, com foco na valorização de imóveis.
+          - paragraph [ref=e136]: Ainda não existem trabalhos publicados nesta categoria.
+        - article [ref=e137]:
+          - generic [ref=e138]:
+            - img [ref=e140]
+            - generic [ref=e142]:
+              - heading "Engenharia Civil e Apoio Técnico" [level=3] [ref=e143]
+              - paragraph [ref=e144]: Serviços de engenharia civil, elaboração de projetos complementares e avaliação técnica.
+          - paragraph [ref=e145]: Ainda não existem trabalhos publicados nesta categoria.
+    - generic [ref=e146]:
+      - generic [ref=e147]:
+        - paragraph [ref=e148]: FAQ
+        - heading "Perguntas frequentes" [level=2] [ref=e149]
+      - generic [ref=e150]:
+        - generic [ref=e151]:
+          - button "Fazem orçamentos gratuitos?" [ref=e152] [cursor=pointer]:
+            - generic [ref=e153]: Fazem orçamentos gratuitos?
+            - img [ref=e154]
+          - paragraph [ref=e156]: Sim, todos os orçamentos são gratuitos e sem compromisso. Entre em contacto via WhatsApp ou e-mail e agendamos uma visita ao local sem qualquer custo.
+        - generic [ref=e157]:
+          - button "Qual é a área de atuação da ProFix Madeira?" [ref=e158] [cursor=pointer]:
+            - generic [ref=e159]: Qual é a área de atuação da ProFix Madeira?
+            - img [ref=e160]
+          - paragraph [ref=e162]: Operamos em toda a Região Autónoma da Madeira, incluindo Funchal, Santa Cruz, Machico, Câmara de Lobos e demais municípios da ilha.
+        - generic [ref=e163]:
+          - button "Quanto tempo demora uma remodelação?" [ref=e164] [cursor=pointer]:
+            - generic [ref=e165]: Quanto tempo demora uma remodelação?
+            - img [ref=e166]
+          - paragraph [ref=e168]: A duração varia conforme a obra. Uma remodelação de casa de banho leva tipicamente 1 a 2 semanas; uma renovação completa de apartamento pode demorar entre 4 a 8 semanas. Incluímos um cronograma detalhado em cada orçamento.
+        - generic [ref=e169]:
+          - button "Trabalham ao fim de semana?" [ref=e170] [cursor=pointer]:
+            - generic [ref=e171]: Trabalham ao fim de semana?
+            - img [ref=e172]
+          - paragraph [ref=e174]: Em situações urgentes, sim. O trabalho regular decorre de segunda a sábado. Contacte-nos para discutir as suas necessidades específicas.
+        - generic [ref=e175]:
+          - button "Como posso solicitar um serviço?" [ref=e176] [cursor=pointer]:
+            - generic [ref=e177]: Como posso solicitar um serviço?
+            - img [ref=e178]
+          - paragraph [ref=e180]: O método mais rápido é pelo WhatsApp (+351 936 284 583). Pode também enviar e-mail para geral@profixmadeira.pt ou clicar no botão de orçamento nesta página.
+        - generic [ref=e181]:
+          - button "Que tipo de garantias oferecem?" [ref=e182] [cursor=pointer]:
+            - generic [ref=e183]: Que tipo de garantias oferecem?
+            - img [ref=e184]
+          - paragraph [ref=e186]: Todos os trabalhos têm garantia mínima de 12 meses. Utilizamos materiais de qualidade e cumprimos as normas portuguesas de construção e segurança.
+    - generic [ref=e188]:
+      - generic [ref=e189]:
+        - paragraph [ref=e190]: Contacto
+        - heading "Contacto" [level=2] [ref=e191]
+        - generic [ref=e192]:
+          - generic [ref=e193]:
+            - generic [ref=e194]: Telefone / WhatsApp
+            - link "+351 936 284 583" [ref=e195] [cursor=pointer]:
+              - /url: tel:+351936284583
+          - generic [ref=e196]:
+            - generic [ref=e197]: E-mail
+            - link "geral@profixmadeira.pt" [ref=e198] [cursor=pointer]:
+              - /url: mailto:geral@profixmadeira.pt
+          - generic [ref=e199]:
+            - generic [ref=e200]: Localização
+            - generic [ref=e201]: Região Autónoma da Madeira, Portugal
+      - generic [ref=e202]:
+        - paragraph [ref=e203]: Precisa de orçamento?
+        - paragraph [ref=e204]: Resposta rápida via WhatsApp.
+        - link "Fale connosco no WhatsApp" [ref=e205] [cursor=pointer]:
+          - /url: https://wa.me/351936284583
+          - img [ref=e206]
+          - text: Fale connosco no WhatsApp
+  - contentinfo [ref=e208]:
+    - generic [ref=e209]:
+      - img "ProFix Madeira" [ref=e210]:
+        - generic [ref=e213]: ProFix
+        - generic [ref=e214]: MADEIRA
+      - generic [ref=e216]:
+        - paragraph [ref=e217]: © 2026 ProFix Madeira · Gonçalves & Vargens, Lda.
+        - paragraph [ref=e218]: NIF 518 795 306
+      - button "Área admin" [ref=e219] [cursor=pointer]:
+        - img [ref=e220]
+        - text: Área admin

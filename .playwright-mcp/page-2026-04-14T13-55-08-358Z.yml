@@ -1,0 +1,206 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications alt+T"
+    - generic [ref=e3]:
+      - banner [ref=e4]:
+        - generic [ref=e7]:
+          - generic [ref=e8]:
+            - link "profixmadeira@gmail.com" [ref=e9] [cursor=pointer]:
+              - /url: mailto:profixmadeira@gmail.com
+              - img [ref=e10]
+              - generic [ref=e13]: profixmadeira@gmail.com
+            - link "+351 936 284 583" [ref=e14] [cursor=pointer]:
+              - /url: tel:+351936284583
+              - img [ref=e15]
+              - generic [ref=e17]: +351 936 284 583
+          - generic [ref=e18]:
+            - link [ref=e19] [cursor=pointer]:
+              - /url: https://www.instagram.com/profix.oficial
+              - img [ref=e20]
+            - link [ref=e23] [cursor=pointer]:
+              - /url: https://www.facebook.com/ProFixMadeira
+              - img [ref=e24]
+        - navigation [ref=e26]:
+          - generic [ref=e27]:
+            - button "ProFix Madeira ProFix MADEIRA Precisão em cada detalhe" [ref=e28] [cursor=pointer]:
+              - img "ProFix Madeira" [ref=e29]
+              - generic [ref=e30]:
+                - generic [ref=e31]: ProFix MADEIRA
+                - generic [ref=e32]: Precisão em cada detalhe
+            - generic [ref=e33]:
+              - button "Sobre Nós" [ref=e34] [cursor=pointer]
+              - button "Serviços" [ref=e35] [cursor=pointer]
+              - button "Portfólio" [ref=e36] [cursor=pointer]
+              - button "FAQ" [ref=e37] [cursor=pointer]
+              - button "Contacto" [ref=e38] [cursor=pointer]
+            - button "Pedir Orçamento" [ref=e39] [cursor=pointer]
+      - link "Contactar via WhatsApp" [ref=e40] [cursor=pointer]:
+        - /url: https://wa.me/351936284583
+        - generic [ref=e41]:
+          - img [ref=e44]
+          - generic: Fale connosco no WhatsApp
+      - generic [ref=e49]:
+        - img "ProFix Madeira" [ref=e51]
+        - heading "ProFix MADEIRA Reformas e Serviços" [level=1] [ref=e52]:
+          - text: ProFix MADEIRA
+          - generic [ref=e53]: Reformas e Serviços
+        - paragraph [ref=e54]: Precisão em cada detalhe
+        - paragraph [ref=e55]: Especialistas em engenharia civil, reparações, manutenção técnica e reabilitação de imóveis na Região Autónoma da Madeira.
+        - generic [ref=e56]:
+          - button "Pedir Orçamento Gratuito" [ref=e57] [cursor=pointer]:
+            - text: Pedir Orçamento Gratuito
+            - img
+          - button "WhatsApp" [ref=e58] [cursor=pointer]:
+            - img
+            - text: WhatsApp
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - generic [ref=e64]: Sobre Nós
+          - heading "ProFix Madeira" [level=2] [ref=e66]
+          - paragraph [ref=e67]:
+            - text: A ProFix Madeira é a marca comercial da
+            - strong [ref=e68]: Gonçalves & Vargens, Lda.
+            - text: (NIF 518795306), uma empresa especializada em engenharia civil, reparações, manutenção técnica e reabilitação de imóveis, com atuação na Região Autónoma da Madeira.
+          - paragraph [ref=e69]: Prestamos serviços tanto em intervenções rápidas e funcionais, como em trabalhos mais amplos de remodelação e reforma, assumindo uma abordagem técnica, organizada e orientada para a qualidade final do imóvel.
+          - paragraph [ref=e70]: A ProFix Madeira nasce com uma visão clara de crescimento, estando preparada para executar projetos cada vez mais complexos, acompanhando a evolução das necessidades dos clientes e do mercado imobiliário.
+          - generic [ref=e71]:
+            - generic [ref=e72]:
+              - img [ref=e73]
+              - heading "Rigor Técnico" [level=3] [ref=e76]
+              - paragraph [ref=e77]: Avaliação técnica rigorosa antes da execução
+            - generic [ref=e78]:
+              - img [ref=e79]
+              - heading "Cumprimento de Prazos" [level=3] [ref=e82]
+              - paragraph [ref=e83]: Prazos acordados e respeitados
+            - generic [ref=e84]:
+              - img [ref=e85]
+              - heading "Atenção ao Detalhe" [level=3] [ref=e88]
+              - paragraph [ref=e89]: Execução cuidada e precisa
+            - generic [ref=e90]:
+              - img [ref=e91]
+              - heading "Comunicação Clara" [level=3] [ref=e94]
+              - paragraph [ref=e95]: Objetiva e transparente com o cliente
+        - img "Equipa ProFix Madeira" [ref=e98]
+      - generic [ref=e102]:
+        - generic [ref=e103]:
+          - text: Serviços
+          - heading "O Que Fazemos" [level=2] [ref=e104]
+          - paragraph [ref=e105]: Conjunto integrado de serviços para atender todas as necessidades do seu imóvel
+        - generic [ref=e106]:
+          - generic [ref=e107] [cursor=pointer]:
+            - generic [ref=e108]:
+              - img "Reparações e Manutenção Técnica" [ref=e109]
+              - img [ref=e113]
+            - generic [ref=e115]:
+              - heading "Reparações e Manutenção Técnica" [level=3] [ref=e116]
+              - paragraph [ref=e117]: Pequenos serviços elétricos, intervenções de canalização, ajustes e correções funcionais em habitações e espaços comerciais.
+          - generic [ref=e118] [cursor=pointer]:
+            - generic [ref=e119]:
+              - img "Pintura e Acabamentos" [ref=e120]
+              - img [ref=e124]
+            - generic [ref=e128]:
+              - heading "Pintura e Acabamentos" [level=3] [ref=e129]
+              - paragraph [ref=e130]: Pintura interior e exterior, retoques e correção de imperfeições para melhorar a estética dos espaços.
+          - generic [ref=e131] [cursor=pointer]:
+            - generic [ref=e132]:
+              - img "Reformas e Remodelações" [ref=e133]
+              - img [ref=e137]
+            - generic [ref=e140]:
+              - heading "Reformas e Remodelações" [level=3] [ref=e141]
+              - paragraph [ref=e142]: Reformas parciais ou completas de casas e apartamentos, com foco na valorização de imóveis.
+          - generic [ref=e143] [cursor=pointer]:
+            - generic [ref=e144]:
+              - img "Engenharia Civil e Apoio Técnico" [ref=e145]
+              - img [ref=e149]
+            - generic [ref=e154]:
+              - heading "Engenharia Civil e Apoio Técnico" [level=3] [ref=e155]
+              - paragraph [ref=e156]: Serviços de engenharia civil, elaboração de projetos complementares e avaliação técnica.
+      - generic [ref=e158]:
+        - generic [ref=e159]:
+          - text: Portfólio
+          - heading "Trabalhos Realizados" [level=2] [ref=e160]
+          - paragraph [ref=e161]: Exemplos de projetos executados com precisão e qualidade
+        - generic [ref=e162]:
+          - img "Projeto 1" [ref=e164]
+          - img "Projeto 2" [ref=e167]
+          - img "Projeto 3" [ref=e170]
+      - generic [ref=e173]:
+        - generic [ref=e174]:
+          - text: FAQ
+          - heading "Perguntas Frequentes" [level=2] [ref=e175]
+          - paragraph [ref=e176]: Respostas às questões mais comuns dos nossos clientes
+        - generic [ref=e177]:
+          - heading "Fazem orçamentos gratuitos?" [level=3] [ref=e179]:
+            - button "Fazem orçamentos gratuitos?" [ref=e180] [cursor=pointer]:
+              - text: Fazem orçamentos gratuitos?
+              - img
+          - heading "Qual é a área de atuação da ProFix Madeira?" [level=3] [ref=e182]:
+            - button "Qual é a área de atuação da ProFix Madeira?" [ref=e183] [cursor=pointer]:
+              - text: Qual é a área de atuação da ProFix Madeira?
+              - img
+          - heading "Quanto tempo demora uma remodelação?" [level=3] [ref=e185]:
+            - button "Quanto tempo demora uma remodelação?" [ref=e186] [cursor=pointer]:
+              - text: Quanto tempo demora uma remodelação?
+              - img
+          - heading "Trabalham ao fim de semana?" [level=3] [ref=e188]:
+            - button "Trabalham ao fim de semana?" [ref=e189] [cursor=pointer]:
+              - text: Trabalham ao fim de semana?
+              - img
+          - heading "Como posso solicitar um serviço?" [level=3] [ref=e191]:
+            - button "Como posso solicitar um serviço?" [ref=e192] [cursor=pointer]:
+              - text: Como posso solicitar um serviço?
+              - img
+          - heading "Que tipo de garantias oferecem?" [level=3] [ref=e194]:
+            - button "Que tipo de garantias oferecem?" [ref=e195] [cursor=pointer]:
+              - text: Que tipo de garantias oferecem?
+              - img
+      - generic [ref=e197]:
+        - generic [ref=e198]:
+          - text: Contacto
+          - heading "Entre em Contacto" [level=2] [ref=e199]
+          - paragraph [ref=e200]: Estamos prontos para atender às suas necessidades. Solicite um orçamento gratuito.
+        - generic [ref=e201]:
+          - generic [ref=e203]:
+            - img [ref=e205]
+            - heading "Telefone / WhatsApp" [level=3] [ref=e207]
+            - link "+351 936 284 583" [ref=e208] [cursor=pointer]:
+              - /url: tel:+351936284583
+          - generic [ref=e210]:
+            - img [ref=e212]
+            - heading "E-mail" [level=3] [ref=e215]
+            - link "profixmadeira@gmail.com" [ref=e216] [cursor=pointer]:
+              - /url: mailto:profixmadeira@gmail.com
+          - generic [ref=e218]:
+            - img [ref=e220]
+            - heading "Localização" [level=3] [ref=e223]
+            - paragraph [ref=e224]: Região Autónoma da Madeira, Portugal
+        - generic [ref=e225]:
+          - heading "Siga-nos nas Redes Sociais" [level=3] [ref=e226]
+          - generic [ref=e227]:
+            - link [ref=e228] [cursor=pointer]:
+              - /url: https://www.instagram.com/profix.oficial
+              - img [ref=e229]
+            - link [ref=e232] [cursor=pointer]:
+              - /url: https://www.facebook.com/ProFixMadeira
+              - img [ref=e233]
+      - contentinfo [ref=e235]:
+        - generic [ref=e236]:
+          - generic [ref=e237]:
+            - generic [ref=e238]:
+              - img "ProFix Madeira" [ref=e239]
+              - paragraph [ref=e240]: Precisão em cada detalhe
+            - generic [ref=e241]:
+              - heading "Informação Legal" [level=4] [ref=e242]
+              - paragraph [ref=e243]:
+                - text: Gonçalves & Vargens, Lda.
+                - text: "NIF: 518795306"
+                - text: Região Autónoma da Madeira
+            - generic [ref=e244]:
+              - heading "Contactos" [level=4] [ref=e245]
+              - generic [ref=e246]:
+                - paragraph [ref=e247]: +351 936 284 583
+                - paragraph [ref=e248]: profixmadeira@gmail.com
+          - paragraph [ref=e250]: © 2026 ProFix Madeira. Todos os direitos reservados.
+  - generic [ref=e251] [cursor=pointer]:
+    - img [ref=e252]
+    - generic [ref=e259]: Made with Manus
