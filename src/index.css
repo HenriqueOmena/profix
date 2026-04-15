@@ -1,4 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+/* ─── Tailwind v4 brand theme ────────────────────────────── */
+@theme {
+  --color-navy:       #0d1a27;
+  --color-navy-alt:   #0a1520;
+  --color-surface:    #132133;
+  --color-surface-hi: #1a2d44;
+  --color-border:     #1e3448;
+  --color-border-hi:  #2a4a68;
+  --color-body:       #e6edf3;
+  --color-muted:      #7a9ab0;
+  --color-dim:        #4d6a82;
+  --color-gold:       #c9983a;
+  --color-gold-lt:    #e3b96a;
+  --color-gold-dk:    #7a5a1e;
+  --color-danger:     #e05252;
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-sans:    'Manrope', sans-serif;
+
+  --radius-sm: 0.5rem;
+  --radius:    0.875rem;
+  --radius-lg: 1.25rem;
+}
 
 /* ─── Tokens ─────────────────────────────────────────────── */
 :root {
