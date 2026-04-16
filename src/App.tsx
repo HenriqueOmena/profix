@@ -4,10 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom'
 import './i18n'
 
-import NewServicesSection from './components/ServicesSection'
+import ServicesPortfolio  from './components/ServicesPortfolio'
 import ServiceDetailPage  from './pages/ServiceDetailPage'
 import PortfolioPage      from './pages/PortfolioPage'
-import { MOCK_CATEGORIES } from './data/mock'
 
 /* ─── Types ──────────────────────────────────────────────── */
 type Locale = 'pt' | 'en' | 'de' | 'fr'
@@ -618,7 +617,7 @@ function AppShell(p: AppShellProps) {
         </section>
 
         {/* ── Services catalogue (new) ─────────────────────── */}
-        <NewServicesSection categories={MOCK_CATEGORIES} />
+        <ServicesPortfolio />
 
         {/* ── FAQ ──────────────────────────────────────────── */}
         <section id="faq" className="section page-wrap">
