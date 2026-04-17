@@ -58,6 +58,7 @@ function ChevronRight() {
 
 /* ─── ServiceCatalogCard ─────────────────────────────────── */
 function ServiceCatalogCard({ svc }: { svc: ServiceCategory }) {
+  const { t } = useTranslation()
   return (
     <Link
       to={`/servicos/${svc.slug}`}
@@ -87,7 +88,7 @@ function ServiceCatalogCard({ svc }: { svc: ServiceCategory }) {
       {/* Footer CTA */}
       <div className="flex items-center gap-1.5 text-[0.78rem] font-600 text-gold
                       transition-gap duration-200 group-hover:gap-2.5">
-        Saber mais
+        {t('services.learnMore')}
         <ChevronRight />
       </div>
     </Link>
@@ -123,7 +124,7 @@ export default function ServicesSection({ categories }: { categories: ServiceCat
                        hover:border-gold-dk hover:text-gold hover:bg-[rgba(201,152,58,0.06)]
                        focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-2"
           >
-            Ver todos os trabalhos realizados
+            {t('portfolio.allWorksCompleted')}
           </Link>
         </div>
       </div>

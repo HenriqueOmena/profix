@@ -31,7 +31,7 @@ function IconWA() {
 }
 
 /* ─── Lightbox ───────────────────────────────────────────── */
-function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+function Lightbox({ src, alt, onClose, closeLabel }: { src: string; alt: string; onClose: () => void; closeLabel: string }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"
@@ -45,7 +45,7 @@ function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: ()
                    border border-border-hi bg-surface text-body hover:text-gold
                    transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
         onClick={onClose}
-        aria-label="Fechar"
+        aria-label={closeLabel}
       >✕</button>
       <img
         src={src}
@@ -70,13 +70,13 @@ export default function ServiceDetailPage() {
   if (!category) {
     return (
       <div className="min-h-screen bg-navy flex flex-col items-center justify-center gap-6 p-8">
-        <p className="text-[1.1rem] text-muted">Serviço não encontrado.</p>
+        <p className="text-[1.1rem] text-muted">{t('serviceDetail.notFound')}</p>
         <Link
           to="/"
           className="inline-flex items-center gap-2 rounded-full border border-border-hi px-5 py-2.5
                      text-[0.83rem] font-600 text-muted hover:text-gold hover:border-gold-dk transition-colors"
         >
-          <IconArrowLeft /> Voltar ao início
+          <IconArrowLeft /> {t('serviceDetail.backHome')}
         </Link>
       </div>
     )
@@ -85,7 +85,12 @@ export default function ServiceDetailPage() {
   return (
     <>
       {lightbox && (
-        <Lightbox src={lightbox} alt={category.name} onClose={() => setLightbox(null)} />
+        <Lightbox
+          src={lightbox}
+          alt={category.name}
+          onClose={() => setLightbox(null)}
+          closeLabel={t('ui.close')}
+        />
       )}
 
       <div className="min-h-screen bg-navy">
@@ -98,7 +103,7 @@ export default function ServiceDetailPage() {
                          hover:text-gold transition-colors
                          focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold rounded"
             >
-              <IconArrowLeft /> Serviços
+              <IconArrowLeft /> {t('nav.services')}
             </button>
             <span className="text-dim">/</span>
             <span className="text-[0.82rem] text-body truncate">{category.name}</span>
@@ -134,7 +139,7 @@ export default function ServiceDetailPage() {
                   className="btn-gold"
                 >
                   <IconWA />
-                  Pedir orçamento gratuito
+                  {t('actions.requestQuote')}
                 </a>
                 <Link
                   to={`/trabalhos?categoria=${category.id}`}
@@ -143,7 +148,7 @@ export default function ServiceDetailPage() {
                              transition-colors focus-visible:outline focus-visible:outline-2
                              focus-visible:outline-gold focus-visible:outline-offset-2"
                 >
-                  Ver trabalhos desta categoria
+                  {t('serviceDetail.viewWorksCategory')}
                 </Link>
               </div>
             </div>
@@ -152,7 +157,7 @@ export default function ServiceDetailPage() {
             <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-border
                             bg-surface p-6 lg:w-80 lg:shrink-0">
               <p className="text-[0.7rem] font-700 uppercase tracking-[0.2em] text-gold">
-                O que inclui
+                {t('serviceDetail.includesTitle')}
               </p>
               <ul className="flex flex-col gap-3">
                 {category.highlights.map((h, i) => (
@@ -169,13 +174,13 @@ export default function ServiceDetailPage() {
           {preview.length > 0 && (
             <div className="flex flex-col gap-6">
               <div className="flex items-center justify-between gap-4">
-                <p className="works-label">Trabalhos recentes</p>
+                <p className="works-label">{t('serviceDetail.recentWorks')}</p>
                 <Link
                   to={`/trabalhos?categoria=${category.id}`}
                   className="text-[0.78rem] font-600 text-gold hover:text-gold-lt
                              underline underline-offset-4 transition-colors"
                 >
-                  Ver todos →
+                  {t('serviceDetail.viewAllShort')} →
                 </Link>
               </div>
 
@@ -212,7 +217,7 @@ export default function ServiceDetailPage() {
                              transition-colors focus-visible:outline focus-visible:outline-2
                              focus-visible:outline-gold focus-visible:outline-offset-2"
                 >
-                  Ver todos os trabalhos desta categoria
+                  {t('serviceDetail.viewAllCategory')}
                 </Link>
               </div>
             </div>
