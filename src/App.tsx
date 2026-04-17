@@ -138,8 +138,15 @@ function LangDropdown() {
     <div className="lang-dd" ref={ref}>
       <button className="lang-dd-trigger" onClick={() => setOpen(p => !p)}
         type="button" aria-expanded={open} aria-haspopup="listbox">
-        <span className="lang-flag">{current.flag}</span>
-        <span className="lang-name">{current.name}</span>
+        <span className="lang-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9">
+            <circle cx="12" cy="12" r="9" />
+            <path strokeLinecap="round" d="M3.5 12h17" />
+            <path strokeLinecap="round" d="M12 3a13.2 13.2 0 0 1 0 18" />
+            <path strokeLinecap="round" d="M12 3a13.2 13.2 0 0 0 0 18" />
+          </svg>
+        </span>
+        <span className="lang-code">{current.code.toUpperCase()}</span>
         <svg className={`lang-chevron ${open ? 'is-open' : ''}`} viewBox="0 0 24 24"
           fill="none" stroke="currentColor" strokeWidth="2.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -364,13 +371,16 @@ function HeroRotatingHeadline() {
   )
 }
 
-function FaqItem({ question, answer }: { question: string; answer: string }) {
+function FaqItem({ question, answer, index }: { question: string; answer: string; index?: number }) {
   const [open, setOpen] = useState(false)
   const bodyRef = useRef<HTMLDivElement>(null)
   return (
     <div className={`faq-item ${open ? 'is-open' : ''}`}>
       <button className="faq-trigger" onClick={() => setOpen(p => !p)} aria-expanded={open} type="button">
-        <span>{question}</span>
+        {index !== undefined && (
+          <span className="faq-item-num" aria-hidden="true">{String(index).padStart(2, '0')}</span>
+        )}
+        <span className="faq-trigger-text">{question}</span>
         <svg className="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
@@ -546,13 +556,19 @@ function AppShell(p: AppShellProps) {
           </Link>
           <nav className="nav-links" aria-label="Main">
             {p.navLinks.map(k => (
-              <a key={k} href={isHome ? `#${k}` : `/#${k}`}
-                className="nav-link"
-                onClick={() => p.setNavOpen(v => !v && false)}>
-                {t(`nav.${k}`)}
-              </a>
+              <React.Fragment key={k}>
+                <a href={isHome ? `#${k}` : `/#${k}`}
+                  className="nav-link"
+                  onClick={() => p.setNavOpen(v => !v && false)}>
+                  {t(`nav.${k}`)}
+                </a>
+                {k === 'services' && (
+                  <Link to="/trabalhos" className="nav-link" onClick={() => p.setNavOpen(v => !v && false)}>
+                    {t('nav.portfolio')}
+                  </Link>
+                )}
+              </React.Fragment>
             ))}
-            <Link to="/trabalhos" className="nav-link">{t('nav.portfolio')}</Link>
           </nav>
           <div className="nav-right">
             <LangDropdown />
@@ -571,15 +587,19 @@ function AppShell(p: AppShellProps) {
 
         <div className={`mobile-menu ${p.navOpen ? 'is-open' : ''}`}>
           {p.navLinks.map(k => (
-            <a key={k} href={isHome ? `#${k}` : `/#${k}`}
-              className="mobile-link"
-              onClick={() => p.setNavOpen(v => !v && false)}>
-              {t(`nav.${k}`)}
-            </a>
+            <React.Fragment key={k}>
+              <a href={isHome ? `#${k}` : `/#${k}`}
+                className="mobile-link"
+                onClick={() => p.setNavOpen(v => !v && false)}>
+                {t(`nav.${k}`)}
+              </a>
+              {k === 'services' && (
+                <Link to="/trabalhos" className="mobile-link" onClick={() => p.setNavOpen(v => !v && false)}>
+                  {t('nav.portfolio')}
+                </Link>
+              )}
+            </React.Fragment>
           ))}
-          <Link to="/trabalhos" className="mobile-link" onClick={() => p.setNavOpen(v => !v && false)}>
-            {t('nav.portfolio')}
-          </Link>
           <div className="mobile-lang-row">
             {LANG_OPTIONS.map(opt => (
               <button key={opt.code} type="button"
@@ -651,46 +671,80 @@ function AppShell(p: AppShellProps) {
 
         {/* ── FAQ ──────────────────────────────────────────── */}
         <section id="faq" className="section page-wrap">
-          <div className="faq-layout">
-            <div className="faq-left">
-              <p className="eyebrow">FAQ</p>
-              <h2 className="section-title">{t('faq.title')}</h2>
-              <p className="faq-support-text">{t('contact.ctaSub')}</p>
-              <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold faq-cta-btn">
+          <div className="faq-header">
+            <p className="eyebrow">FAQ</p>
+            <h2 className="section-title">{t('faq.title')}</h2>
+          </div>
+          <div className="faq-split">
+            <div className="faq-sidebar">
+              <p className="faq-sidebar-text">{t('contact.ctaSub')}</p>
+              <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold" style={{ alignSelf: 'flex-start' }}>
                 {t('actions.freeQuote')}
               </a>
+              <div className="faq-stat-col">
+                <div className="faq-stat">
+                  <span className="faq-stat-num">+10</span>
+                  <span className="faq-stat-lbl">anos experiência</span>
+                </div>
+                <div className="faq-stat">
+                  <span className="faq-stat-num">24h</span>
+                  <span className="faq-stat-lbl">resposta garantida</span>
+                </div>
+              </div>
             </div>
-            <div className="faq-list">
-              {p.faqItems.map(item => <FaqItem key={item.q} question={item.q} answer={item.a} />)}
+            <div className="faq-accordion">
+              {p.faqItems.map((item, i) => <FaqItem key={item.q} question={item.q} answer={item.a} index={i + 1} />)}
             </div>
           </div>
         </section>
 
         {/* ── Contact ──────────────────────────────────────── */}
         <section id="contact" className="section section-alt">
-          <div className="page-wrap contact-layout">
-            <div className="contact-info">
-              <p className="eyebrow">{t('nav.contact')}</p>
-              <h2 className="section-title">{t('contact.title')}</h2>
-              <div className="contact-items">
-                <div className="contact-item">
-                  <span className="contact-lbl">{t('contact.phone')}</span>
-                  <a href="tel:+351936284583" className="contact-val">+351 936 284 583</a>
-                </div>
-                <div className="contact-item">
-                  <span className="contact-lbl">{t('contact.email')}</span>
-                  <a href="mailto:geral@profixmadeira.pt" className="contact-val">geral@profixmadeira.pt</a>
-                </div>
-                <div className="contact-item">
-                  <span className="contact-lbl">{t('contact.locationLabel')}</span>
-                  <span className="contact-val">{t('contact.locationValue')}</span>
+          <div className="page-wrap contact-new-wrap">
+            <div className="contact-top-row">
+              <div className="contact-head">
+                <p className="eyebrow">{t('nav.contact')}</p>
+                <h2 className="section-title">{t('contact.title')}</h2>
+              </div>
+              <div className="contact-channels-row">
+                <a href="tel:+351936284583" className="contact-channel-card">
+                  <span className="contact-ch-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .95h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+                    </svg>
+                  </span>
+                  <span className="contact-ch-label">{t('contact.phone')}</span>
+                  <span className="contact-ch-value">+351 936 284 583</span>
+                </a>
+                <a href="mailto:geral@profixmadeira.pt" className="contact-channel-card">
+                  <span className="contact-ch-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="20" height="16" x="2" y="4" rx="2"/>
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/>
+                    </svg>
+                  </span>
+                  <span className="contact-ch-label">{t('contact.email')}</span>
+                  <span className="contact-ch-value">geral@profixmadeira.pt</span>
+                </a>
+                <div className="contact-channel-card">
+                  <span className="contact-ch-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </span>
+                  <span className="contact-ch-label">{t('contact.locationLabel')}</span>
+                  <span className="contact-ch-value">{t('contact.locationValue')}</span>
                 </div>
               </div>
             </div>
-            <div className="contact-cta-card">
-              <p className="cta-title">{t('contact.cta')}</p>
-              <p className="cta-sub">{t('contact.ctaSub')}</p>
-              <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold btn-large wa-btn-full">
+            <div className="contact-cta-full">
+              <div className="contact-cta-full-left">
+                <span className="eyebrow">{t('actions.freeQuote')}</span>
+                <p className="contact-cta-headline">{t('contact.cta')}</p>
+                <p className="contact-cta-sub">{t('contact.ctaSub')}</p>
+              </div>
+              <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold btn-large">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="wa-icon">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                 </svg>
