@@ -1,22 +1,33 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { SERVICES } from '../data/services'
 import type { ServiceCategory, PortfolioWork, WorkImage } from '../data/services'
 
 const WHATSAPP = 'https://wa.me/351936284583'
 
-/* ─── View state machine ─────────────────────────────────── */
 type View = 'catalog' | 'service' | 'work'
 
-/* ─── Root component ─────────────────────────────────────── */
-export default function ServicesPortfolio() {
-  const [view,            setView]           = useState<View>('catalog')
-  const [selectedService, setSelectedService] = useState<ServiceCategory | null>(null)
-  const [selectedWork,    setSelectedWork]    = useState<PortfolioWork | null>(null)
-  const [activeImg,       setActiveImg]       = useState(0)
+const localeMap: Record<string, string> = {
+  pt: 'pt-PT',
+  en: 'en-GB',
+  de: 'de-DE',
+  fr: 'fr-FR',
+}
 
-  // Animated-in flags (set 1 frame after mount so CSS transitions fire)
+function formatWorkMonth(date: string, lng: string) {
+  const loc = localeMap[lng] ?? 'pt-PT'
+  return new Date(`${date}-01`).toLocaleDateString(loc, { month: 'long', year: 'numeric' })
+}
+
+export default function ServicesPortfolio() {
+  const { t, i18n } = useTranslation()
+  const [view, setView] = useState<View>('catalog')
+  const [selectedService, setSelectedService] = useState<ServiceCategory | null>(null)
+  const [selectedWork, setSelectedWork] = useState<PortfolioWork | null>(null)
+  const [activeImg, setActiveImg] = useState(0)
   const [panelIn, setPanelIn] = useState(false)
-  const [workIn,  setWorkIn]  = useState(false)
+  const [workIn, setWorkIn] = useState(false)
 
   const openService = useCallback((svc: ServiceCategory) => {
     setSelectedService(svc)
@@ -26,7 +37,10 @@ export default function ServicesPortfolio() {
 
   const closeService = useCallback(() => {
     setPanelIn(false)
-    setTimeout(() => { setView('catalog'); setSelectedService(null) }, 360)
+    setTimeout(() => {
+      setView('catalog')
+      setSelectedService(null)
+    }, 360)
   }, [])
 
   const openWork = useCallback((work: PortfolioWork) => {
@@ -38,10 +52,12 @@ export default function ServicesPortfolio() {
 
   const closeWork = useCallback(() => {
     setWorkIn(false)
-    setTimeout(() => { setView('service'); setSelectedWork(null) }, 300)
+    setTimeout(() => {
+      setView('service')
+      setSelectedWork(null)
+    }, 300)
   }, [])
 
-  // Keyboard nav
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -51,53 +67,72 @@ export default function ServicesPortfolio() {
       if (view === 'work' && selectedWork) {
         const imgs = selectedWork.images
         if (e.key === 'ArrowRight') setActiveImg(i => Math.min(i + 1, imgs.length - 1))
-        if (e.key === 'ArrowLeft')  setActiveImg(i => Math.max(i - 1, 0))
+        if (e.key === 'ArrowLeft') setActiveImg(i => Math.max(i - 1, 0))
       }
     }
     window.addEventListener('keydown', h)
     return () => window.removeEventListener('keydown', h)
   }, [view, selectedWork, closeWork, closeService])
 
-  // Body scroll lock
   useEffect(() => {
     document.body.style.overflow = view !== 'catalog' ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    return () => {
+      document.body.style.overflow = ''
+    }
   }, [view])
 
   const sorted = [...SERVICES].filter(s => s.active).sort((a, b) => a.order - b.order)
 
   return (
     <>
-      {/* ── Catalog section ─────────────────────────────── */}
-      <section id="services" className="section section-alt">
-        <div className="page-wrap">
-          <div className="section-header">
-            <p className="eyebrow">Serviços</p>
-            <h2 className="section-title">O que fazemos</h2>
-            <p className="section-sub">
-              Quatro áreas de especialização para todas as necessidades do seu imóvel na Madeira.
-            </p>
+      <section id="services" className="section section-alt relative overflow-hidden" aria-labelledby="services-heading">
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_55%_at_50%_-8%,rgba(201,152,58,0.14),transparent_52%)]"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -right-24 top-1/3 h-72 w-72 rounded-full bg-gold/5 blur-3xl"
+          aria-hidden
+        />
+        <div className="page-wrap relative">
+          <div className="section-header max-w-[56rem]">
+            <p className="eyebrow">{t('nav.services')}</p>
+            <h2 id="services-heading" className="section-title">
+              {t('services.title')}
+            </h2>
+            <p className="section-sub services-lead">{t('services.catalogLead')}</p>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-7">
             {sorted.map((svc, i) => (
               <ServiceCard key={svc.id} service={svc} index={i} onOpen={() => openService(svc)} />
             ))}
           </div>
+
+          <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <Link
+              to="/trabalhos"
+              className="inline-flex items-center gap-2 rounded-full border border-border-hi bg-surface/60 px-6 py-3 text-[0.84rem] font-700 text-muted backdrop-blur-sm transition-all duration-200 hover:border-gold-dk hover:bg-[rgba(201,152,58,0.08)] hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-2"
+            >
+              {t('portfolio.allWorksCompleted')}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="size-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* ── Service detail panel ─────────────────────────── */}
       {(view === 'service' || view === 'work') && selectedService && (
         <ServicePanel
           service={selectedService}
           panelIn={panelIn}
+          lng={i18n.language}
           onClose={closeService}
           onWorkOpen={openWork}
         />
       )}
 
-      {/* ── Work detail modal ────────────────────────────── */}
       {view === 'work' && selectedWork && (
         <WorkModal
           work={selectedWork}
@@ -105,6 +140,7 @@ export default function ServicesPortfolio() {
           workIn={workIn}
           activeImg={activeImg}
           setActiveImg={setActiveImg}
+          lng={i18n.language}
           onClose={closeWork}
         />
       )}
@@ -112,7 +148,6 @@ export default function ServicesPortfolio() {
   )
 }
 
-/* ─── ServiceCard ────────────────────────────────────────── */
 function ServiceCard({
   service,
   index,
@@ -122,90 +157,69 @@ function ServiceCard({
   index: number
   onOpen: () => void
 }) {
+  const { t } = useTranslation()
   const activeWorks = service.works.filter(w => w.active).length
 
   return (
     <article
-      className="group relative flex flex-col overflow-hidden rounded-[1.25rem]
-                 border border-border bg-surface cursor-pointer
-                 transition-all duration-300
-                 hover:border-gold-dk hover:-translate-y-1
-                 hover:shadow-[0_12px_48px_rgba(201,152,58,0.10),0_2px_8px_rgba(0,0,0,0.4)]"
-      style={{ animationDelay: `${index * 90}ms` }}
+      className="group relative flex cursor-pointer flex-col overflow-hidden rounded-[1.2rem] border border-border/95 bg-surface/90 shadow-[0_24px_72px_-34px_rgba(0,0,0,0.75)] ring-1 ring-white/[0.04] transition-all duration-300 hover:-translate-y-1 hover:border-gold-dk/80 hover:shadow-[0_28px_90px_-26px_rgba(201,152,58,0.16),0_10px_32px_-16px_rgba(0,0,0,0.52)]"
+      style={{ animationDelay: `${index * 70}ms` }}
       onClick={onOpen}
       tabIndex={0}
       role="button"
-      aria-label={`Ver detalhes: ${service.name}`}
+      aria-label={`${t('services.learnMore')}: ${service.name}`}
       onKeyDown={e => e.key === 'Enter' && onOpen()}
     >
-      {/* ── Image hero ────────────────────────────────────── */}
       <div className="relative overflow-hidden" style={{ aspectRatio: '16/9' }}>
         <img
           src={service.imageUrl}
-          alt={service.name}
-          className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+          alt=""
+          className="size-full object-cover transition-transform duration-[650ms] ease-out group-hover:scale-[1.06]"
           loading="lazy"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050a10]/96 via-[#0d1a27]/35 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/35 to-transparent opacity-80" />
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#060f18]/95 via-[#060f18]/25 to-transparent" />
-
-        {/* Works count pill */}
-        <div className="absolute top-3.5 right-3.5">
-          <span className="flex items-center gap-1.5 rounded-full border border-gold-dk
-                           bg-[rgba(201,152,58,0.15)] px-3 py-1 backdrop-blur-sm">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
-              className="size-3 text-gold">
-              <path strokeLinecap="round" strokeLinejoin="round"
-                d="M2.25 15.75l5.16-5.16a2.25 2.25 0 013.18 0l5.16 5.16m-1.5-1.5l1.41-1.41a2.25 2.25 0 013.18 0l2.91 2.91" />
-            </svg>
-            <span className="text-[0.65rem] font-700 uppercase tracking-wide text-gold">
-              {activeWorks} trabalho{activeWorks !== 1 ? 's' : ''}
-            </span>
+        <div className="absolute right-3.5 top-3.5">
+          <span className="flex items-center gap-1.5 rounded-full border border-gold-dk/60 bg-[rgba(8,14,22,0.72)] px-3 py-1.5 text-[0.65rem] font-800 uppercase tracking-[0.12em] text-gold backdrop-blur-md">
+            {t('services.workCount', { count: activeWorks })}
           </span>
         </div>
 
-        {/* Service name on image */}
-        <div className="absolute bottom-0 left-0 right-0 p-5">
-          <h3 className="font-[var(--font-display,_'Cormorant_Garamond',_serif)]
-                         text-[1.45rem] font-700 leading-tight text-white
-                         transition-colors duration-200 group-hover:text-gold-lt">
+        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
+          <h3 className="font-[var(--font-display)] text-[1.38rem] font-700 leading-[1.14] text-white transition-colors duration-200 group-hover:text-gold-lt sm:text-[1.5rem]">
             {service.name}
           </h3>
         </div>
       </div>
 
-      {/* ── Card body ─────────────────────────────────────── */}
-      <div className="flex flex-1 flex-col gap-4 p-5">
-        <p className="text-[0.84rem] leading-relaxed text-muted line-clamp-2">
-          {service.description}
-        </p>
+      <div className="flex flex-1 flex-col gap-4 border-t border-border/80 bg-[linear-gradient(180deg,rgba(19,33,51,0.98)_0%,rgba(13,26,39,0.99)_100%)] p-5 sm:p-6">
+        <p className="line-clamp-2 text-[0.85rem] leading-[1.7] text-muted">{service.description}</p>
 
-        {/* Sub-service chips */}
         <div className="flex flex-wrap gap-1.5">
           {service.subServices.map(sub => (
-            <span
-              key={sub.id}
-              className="rounded-full border border-border-hi bg-navy
-                         px-2.5 py-0.5 text-[0.67rem] font-600 text-dim"
-            >
+            <span key={sub.id} className="rounded-full border border-border-hi/90 bg-navy-alt/80 px-2.5 py-1 text-[0.64rem] font-700 uppercase tracking-[0.08em] text-dim">
               {sub.name}
             </span>
           ))}
         </div>
 
-        {/* CTA link */}
         <button
           type="button"
-          className="group/cta mt-auto flex items-center gap-2 self-start
-                     text-[0.82rem] font-700 text-gold transition-colors
-                     hover:text-gold-lt focus-visible:outline focus-visible:outline-2
-                     focus-visible:outline-gold focus-visible:outline-offset-2 rounded"
-          onClick={e => { e.stopPropagation(); onOpen() }}
+          className="group/cta mt-auto flex items-center gap-2 self-start rounded-md text-[0.82rem] font-800 text-gold transition-colors hover:text-gold-lt focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-2"
+          onClick={e => {
+            e.stopPropagation()
+            onOpen()
+          }}
         >
-          Trabalhos Realizados
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"
-            className="size-3.5 transition-transform duration-200 group-hover/cta:translate-x-0.5">
+          {t('services.viewWorksCta')}
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            className="size-3.5 transition-transform duration-200 group-hover/cta:translate-x-1"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
         </button>
@@ -214,123 +228,99 @@ function ServiceCard({
   )
 }
 
-/* ─── ServicePanel ───────────────────────────────────────── */
 function ServicePanel({
   service,
   panelIn,
+  lng,
   onClose,
   onWorkOpen,
 }: {
   service: ServiceCategory
   panelIn: boolean
+  lng: string
   onClose: () => void
   onWorkOpen: (work: PortfolioWork) => void
 }) {
+  const { t } = useTranslation()
   const activeWorks = service.works.filter(w => w.active)
   const panelRef = useRef<HTMLDivElement>(null)
 
-  // Focus trap on open
   useEffect(() => {
     panelRef.current?.focus()
   }, [])
 
   return (
     <>
-      {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-[rgba(4,9,16,0.72)] backdrop-blur-[3px]"
-        style={{
-          opacity: panelIn ? 1 : 0,
-          transition: 'opacity 0.36s ease',
-        }}
+        className="fixed inset-0 z-40 bg-[rgba(3,8,14,0.78)] backdrop-blur-[4px]"
+        style={{ opacity: panelIn ? 1 : 0, transition: 'opacity 0.36s ease' }}
         onClick={onClose}
-        aria-hidden="true"
+        aria-hidden
       />
 
-      {/* Slide panel */}
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label={service.name}
         tabIndex={-1}
-        className="fixed right-0 top-0 bottom-0 z-50 flex flex-col
-                   bg-navy-alt outline-none"
+        className="fixed bottom-0 right-0 top-0 z-50 flex flex-col bg-navy-alt outline-none"
         style={{
-          width: 'min(700px, 100vw)',
+          width: 'min(760px, 100vw)',
           borderLeft: '1px solid var(--border)',
+          boxShadow: '-28px 0 100px rgba(0,0,0,0.55), inset 3px 0 0 rgba(201,152,58,0.22)',
           transform: panelIn ? 'translateX(0)' : 'translateX(100%)',
-          transition: 'transform 0.36s cubic-bezier(0.4, 0, 0.2, 1)',
-          boxShadow: '-24px 0 80px rgba(0,0,0,0.5)',
+          transition: 'transform 0.38s cubic-bezier(0.32, 0.72, 0, 1)',
         }}
       >
-        {/* ── Sticky header ─────────────────────────────────── */}
-        <div className="sticky top-0 z-10 flex items-center justify-between gap-4
-                        border-b border-border bg-navy-alt/96 px-6 py-3.5 backdrop-blur-sm shrink-0">
+        <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between gap-4 border-b border-border bg-navy-alt/95 px-5 py-3.5 backdrop-blur-md sm:px-6">
           <button
+            type="button"
             onClick={onClose}
-            className="flex items-center gap-2 text-[0.8rem] font-600 text-muted
-                       hover:text-gold transition-colors focus-visible:outline
-                       focus-visible:outline-2 focus-visible:outline-gold rounded"
+            className="flex items-center gap-2 rounded-md text-[0.8rem] font-700 text-muted transition-colors hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-              className="size-4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 12H5M12 5l-7 7 7 7" />
             </svg>
-            Todos os serviços
+            {t('services.backAll')}
           </button>
 
           <button
+            type="button"
             onClick={onClose}
-            className="flex size-8 items-center justify-center rounded-full
-                       border border-border-hi text-muted text-sm
-                       hover:border-gold-dk hover:text-gold transition-colors
-                       focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
-            aria-label="Fechar"
-          >✕</button>
+            className="flex size-9 items-center justify-center rounded-full border border-border-hi text-muted transition-colors hover:border-gold-dk hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+            aria-label={t('ui.close')}
+          >
+            ✕
+          </button>
         </div>
 
-        {/* ── Scrollable body ───────────────────────────────── */}
-        <div className="flex flex-col overflow-y-auto flex-1">
-
-          {/* Service hero image */}
-          <div className="relative overflow-hidden shrink-0" style={{ aspectRatio: '21/9' }}>
-            <img
-              src={service.imageUrl}
-              alt={service.name}
-              className="size-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-alt/80 via-navy-alt/10 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 px-7 pb-5">
-              <p className="text-[0.65rem] font-700 uppercase tracking-[0.22em] text-gold mb-1.5">
-                Serviço
+        <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain">
+          <div className="relative shrink-0 overflow-hidden" style={{ aspectRatio: '20/8' }}>
+            <img src={service.imageUrl} alt="" className="size-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-alt via-navy-alt/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 px-6 pb-5 sm:px-8 sm:pb-6">
+              <p className="mb-1.5 text-[0.65rem] font-800 uppercase tracking-[0.24em] text-gold">
+                {t('services.panelKind')}
               </p>
-              <h2 className="font-[var(--font-display,_'Cormorant_Garamond',_serif)]
-                             text-[2.1rem] font-700 leading-tight text-white">
+              <h2 className="font-[var(--font-display)] text-[1.85rem] font-700 leading-tight text-white sm:text-[2.15rem]">
                 {service.name}
               </h2>
             </div>
           </div>
 
-          {/* Body content */}
-          <div className="flex flex-col gap-7 px-7 py-7">
+          <div className="flex flex-col gap-7 px-6 py-7 sm:px-8 sm:py-8">
+            <p className="border-l-2 border-gold pl-4 text-[0.9rem] leading-[1.8] text-muted">{service.description}</p>
 
-            {/* Description */}
-            <p className="text-[0.9rem] leading-[1.8] text-muted border-l-2 border-gold-dk pl-4">
-              {service.description}
-            </p>
-
-            {/* Sub-services */}
             <div>
-              <p className="text-[0.64rem] font-700 uppercase tracking-[0.22em] text-gold mb-3">
-                O que fazemos
+              <p className="mb-3 text-[0.64rem] font-800 uppercase tracking-[0.22em] text-gold">
+                {t('services.scopeTitle')}
               </p>
               <div className="flex flex-wrap gap-2">
                 {service.subServices.map(sub => (
                   <span
                     key={sub.id}
-                    className="rounded-full border border-border-hi bg-surface
-                               px-3 py-1 text-[0.76rem] font-600 text-muted"
+                    className="rounded-full border border-border-hi bg-surface px-3 py-1.5 text-[0.78rem] font-600 text-muted"
                   >
                     {sub.name}
                   </span>
@@ -338,60 +328,46 @@ function ServicePanel({
               </div>
             </div>
 
-            {/* Divider */}
-            <div className="h-px bg-border" />
+            <div className="h-px bg-gradient-to-r from-transparent via-border-hi to-transparent" />
 
-            {/* Works section */}
             <div>
-              <div className="flex items-center justify-between gap-4 mb-5">
-                <p className="text-[0.64rem] font-700 uppercase tracking-[0.22em] text-gold">
-                  Trabalhos Realizados
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <p className="text-[0.64rem] font-800 uppercase tracking-[0.22em] text-gold">
+                  {t('portfolio.title')}
                 </p>
-                <span className="text-[0.73rem] text-dim">
-                  {activeWorks.length} projecto{activeWorks.length !== 1 ? 's' : ''}
+                <span className="text-[0.76rem] font-600 text-dim">
+                  {t('services.projectCount', { count: activeWorks.length })}
                 </span>
               </div>
 
               {activeWorks.length === 0 ? (
-                <div className="flex flex-col items-center gap-3 rounded-[1rem]
-                                border border-dashed border-border py-12 text-center">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"
-                    className="size-8 opacity-25">
-                    <path strokeLinecap="round" strokeLinejoin="round"
-                      d="M2.25 15.75l5.16-5.16a2.25 2.25 0 013.18 0l5.16 5.16m-1.5-1.5l1.41-1.41a2.25 2.25 0 013.18 0l2.91 2.91M2.25 19.5h19.5M3.75 4.5h16.5a1.5 1.5 0 011.5 1.5v12a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5V6a1.5 1.5 0 011.5-1.5z" />
+                <div className="flex flex-col items-center gap-3 rounded-[1.05rem] border border-dashed border-border-hi/80 bg-surface/40 py-14 text-center">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="size-9 opacity-30">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.25 15.75l5.16-5.16a2.25 2.25 0 013.18 0l5.16 5.16m-1.5-1.5l1.41-1.41a2.25 2.25 0 013.18 0l2.91 2.91M2.25 19.5h19.5M3.75 4.5h16.5a1.5 1.5 0 011.5 1.5v12a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5V6a1.5 1.5 0 011.5-1.5z"
+                    />
                   </svg>
-                  <p className="text-[0.84rem] text-muted">
-                    Trabalhos em breve nesta categoria.
-                  </p>
+                  <p className="max-w-[28ch] text-[0.86rem] text-muted">{t('services.emptyCategory')}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                   {activeWorks.map(work => (
-                    <WorkCard key={work.id} work={work} onClick={() => onWorkOpen(work)} />
+                    <WorkCard key={work.id} work={work} lng={lng} onClick={() => onWorkOpen(work)} />
                   ))}
                 </div>
               )}
             </div>
 
-            {/* WhatsApp CTA */}
-            <div className="rounded-[1rem] border border-border bg-surface p-6 text-center">
-              <p className="mb-1 text-[0.95rem] font-700 text-body">
-                Interessado neste serviço?
-              </p>
-              <p className="mb-5 text-[0.82rem] text-muted">
-                Orçamento gratuito, sem compromisso. Resposta em 24 h.
-              </p>
-              <a
-                href={WHATSAPP}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-gold"
-              >
+            <div className="rounded-[1.05rem] border border-border-hi/90 bg-[linear-gradient(145deg,rgba(26,45,68,0.55)_0%,rgba(13,26,39,0.9)_100%)] p-6 text-center shadow-inner">
+              <p className="mb-1 text-[0.98rem] font-800 text-body">{t('services.ctaInterested')}</p>
+              <p className="mb-5 text-[0.82rem] leading-relaxed text-muted">{t('services.ctaSub')}</p>
+              <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold">
                 <WaIcon />
-                Pedir orçamento
+                {t('services.requestQuoteShort')}
               </a>
             </div>
-
           </div>
         </div>
       </div>
@@ -399,71 +375,56 @@ function ServicePanel({
   )
 }
 
-/* ─── WorkCard (inside service panel) ───────────────────── */
-function WorkCard({ work, onClick }: { work: PortfolioWork; onClick: () => void }) {
+function WorkCard({ work, lng, onClick }: { work: PortfolioWork; lng: string; onClick: () => void }) {
+  const { t } = useTranslation()
   const hasBefore = work.images.some(img => img.isBefore)
-  const dateLabel = formatDate(work.date)
+  const dateLabel = formatWorkMonth(work.date, lng)
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group text-left overflow-hidden rounded-[1rem]
-                 border border-border bg-navy
-                 transition-all duration-250
-                 hover:border-gold-dk hover:-translate-y-0.5
-                 hover:shadow-[0_6px_24px_rgba(201,152,58,0.10)]
-                 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+      className="group overflow-hidden rounded-[1rem] border border-border bg-navy text-left transition-all duration-250 hover:-translate-y-0.5 hover:border-gold-dk hover:shadow-[0_10px_30px_rgba(201,152,58,0.1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
     >
-      {/* Featured image */}
       <div className="relative overflow-hidden" style={{ aspectRatio: '3/2' }}>
         <img
           src={work.featuredImageUrl}
-          alt={work.title}
-          className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+          alt=""
+          className="size-full object-cover transition-transform duration-[520ms] group-hover:scale-[1.07]"
           loading="lazy"
         />
-        {/* Hover overlay */}
-        <div className="absolute inset-0 flex items-end p-3.5
-                        bg-gradient-to-t from-black/65 to-transparent
-                        opacity-0 group-hover:opacity-100 transition-opacity duration-250">
-          <span className="text-[0.7rem] font-600 text-white/80 flex items-center gap-1">
-            Ver projecto
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-              className="size-3">
+        <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 to-transparent p-3.5 opacity-0 transition-opacity duration-250 group-hover:opacity-100">
+          <span className="flex items-center gap-1.5 text-[0.72rem] font-700 text-white/90">
+            {t('services.viewProject')}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-3.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
           </span>
         </div>
-        {/* Before/after badge */}
         {hasBefore && (
-          <span className="absolute top-2.5 left-2.5 rounded-full
-                           border border-border bg-surface-hi/90 px-2 py-0.5
-                           text-[0.62rem] font-700 text-muted backdrop-blur-sm">
-            Antes / Depois
+          <span className="absolute left-2.5 top-2.5 rounded-full border border-border bg-surface-hi/92 px-2 py-0.5 text-[0.62rem] font-800 uppercase tracking-wide text-muted backdrop-blur-sm">
+            {t('services.beforeAfter')}
           </span>
         )}
       </div>
 
-      {/* Text */}
-      <div className="p-4">
-        <h4 className="mb-1 text-[0.88rem] font-700 leading-snug text-body
-                       line-clamp-2 group-hover:text-gold transition-colors duration-200">
+      <div className="p-3.5 sm:p-4">
+        <h4 className="mb-1 line-clamp-2 text-[0.9rem] font-800 leading-snug text-body transition-colors duration-200 group-hover:text-gold">
           {work.title}
         </h4>
-        <p className="text-[0.72rem] text-dim capitalize">{dateLabel}</p>
+        <p className="text-[0.72rem] capitalize text-dim">{dateLabel}</p>
       </div>
     </button>
   )
 }
 
-/* ─── WorkModal ──────────────────────────────────────────── */
 function WorkModal({
   work,
   serviceName,
   workIn,
   activeImg,
   setActiveImg,
+  lng,
   onClose,
 }: {
   work: PortfolioWork
@@ -471,13 +432,14 @@ function WorkModal({
   workIn: boolean
   activeImg: number
   setActiveImg: (i: number) => void
+  lng: string
   onClose: () => void
 }) {
-  const images   = work.images
-  const current  = images[activeImg] ?? images[0]
+  const { t } = useTranslation()
+  const images = work.images
+  const current = images[activeImg] ?? images[0]
   const stripRef = useRef<HTMLDivElement>(null)
 
-  // Scroll active thumb into view
   useEffect(() => {
     const el = stripRef.current?.children[activeImg] as HTMLElement | undefined
     el?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' })
@@ -485,152 +447,118 @@ function WorkModal({
 
   return (
     <div
-      className="fixed inset-0 z-[55] flex items-end sm:items-center justify-center"
+      className="fixed inset-0 z-[55] flex items-end justify-center sm:items-center"
       style={{ padding: 'clamp(0px, 3vw, 24px)' }}
     >
-      {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-[rgba(4,8,14,0.88)] backdrop-blur-md"
+        className="absolute inset-0 bg-[rgba(2,6,12,0.88)] backdrop-blur-md"
         style={{ opacity: workIn ? 1 : 0, transition: 'opacity 0.28s ease' }}
         onClick={onClose}
-        aria-hidden="true"
+        aria-hidden
       />
 
-      {/* Modal */}
       <div
         role="dialog"
         aria-modal="true"
         aria-label={work.title}
-        className="relative z-10 flex flex-col overflow-hidden bg-navy-alt"
+        className="relative z-10 flex max-h-[94vh] flex-col overflow-hidden bg-navy-alt"
         style={{
-          width: 'min(860px, 100%)',
-          maxHeight: '94vh',
-          borderRadius: 'clamp(0.75rem, 2vw, 1.5rem)',
+          width: 'min(880px, 100%)',
+          borderRadius: 'clamp(0.75rem, 2vw, 1.45rem)',
           border: '1px solid var(--border-hi)',
-          boxShadow: '0 32px 96px rgba(0,0,0,0.65), 0 2px 8px rgba(0,0,0,0.5)',
-          transform: workIn ? 'translateY(0) scale(1)' : 'translateY(24px) scale(0.96)',
+          boxShadow: '0 36px 120px rgba(0,0,0,0.72), 0 0 0 1px rgba(201,152,58,0.08)',
+          transform: workIn ? 'translateY(0) scale(1)' : 'translateY(22px) scale(0.97)',
           opacity: workIn ? 1 : 0,
-          transition: 'transform 0.32s cubic-bezier(0.34,1.4,0.64,1), opacity 0.26s ease',
+          transition: 'transform 0.34s cubic-bezier(0.34, 1.35, 0.64, 1), opacity 0.26s ease',
         }}
       >
-        {/* ── Modal header ──────────────────────────────────── */}
-        <div className="flex items-start gap-3 border-b border-border px-5 py-4 shrink-0">
-          <div className="flex-1 min-w-0">
-            <p className="text-[0.64rem] font-700 uppercase tracking-[0.2em] text-gold mb-0.5">
-              {serviceName}
-            </p>
-            <h3 className="text-[1rem] font-700 leading-snug text-body">
-              {work.title}
-            </h3>
+        <div className="flex shrink-0 items-start gap-3 border-b border-border px-5 py-4 sm:px-6">
+          <div className="min-w-0 flex-1">
+            <p className="mb-0.5 text-[0.64rem] font-800 uppercase tracking-[0.2em] text-gold">{serviceName}</p>
+            <h3 className="text-[1.02rem] font-800 leading-snug text-body">{work.title}</h3>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="shrink-0 flex size-8 items-center justify-center rounded-full
-                       border border-border-hi text-sm text-muted
-                       hover:border-gold-dk hover:text-gold transition-colors
-                       focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
-            aria-label="Fechar"
-          >✕</button>
+            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border-hi text-sm text-muted transition-colors hover:border-gold-dk hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+            aria-label={t('ui.close')}
+          >
+            ✕
+          </button>
         </div>
 
-        {/* ── Scrollable content ────────────────────────────── */}
-        <div className="flex flex-col overflow-y-auto flex-1">
-
-          {/* Featured image */}
-          <div
-            className="relative overflow-hidden bg-[#030609] shrink-0"
-            style={{ aspectRatio: '16/9' }}
-          >
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <div className="relative shrink-0 overflow-hidden bg-[#030609]" style={{ aspectRatio: '16/9' }}>
             <img
               key={current?.id}
               src={current?.url}
               alt={current?.caption ?? work.title}
               className="size-full object-contain"
-              style={{ animation: 'imgFadeIn 0.3s ease' }}
+              style={{ animation: 'svcImgFade 0.32s ease' }}
             />
 
-            {/* Before / Depois badge */}
             {current?.isBefore !== undefined && (
               <span
-                className={`absolute top-3 left-3 rounded-full px-3 py-1
-                             text-[0.68rem] font-700 uppercase tracking-wide backdrop-blur-sm
-                             border ${current.isBefore
-                              ? 'border-border bg-surface-hi/85 text-muted'
-                              : 'border-gold-dk bg-[rgba(201,152,58,0.2)] text-gold'
-                            }`}
+                className={`absolute left-3 top-3 rounded-full px-3 py-1 text-[0.68rem] font-800 uppercase tracking-wide backdrop-blur-sm ${
+                  current.isBefore
+                    ? 'border border-border bg-surface-hi/88 text-muted'
+                    : 'border border-gold-dk bg-[rgba(201,152,58,0.22)] text-gold'
+                }`}
               >
-                {current.isBefore ? 'Antes' : 'Depois'}
+                {current.isBefore ? t('services.before') : t('services.after')}
               </span>
             )}
 
-            {/* Prev / Next arrows */}
             {images.length > 1 && (
               <>
                 <button
+                  type="button"
                   onClick={() => setActiveImg(Math.max(activeImg - 1, 0))}
                   disabled={activeImg === 0}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center
-                             rounded-full border border-border-hi bg-navy-alt/80 backdrop-blur-sm
-                             text-muted hover:text-gold hover:border-gold-dk transition-all
-                             disabled:opacity-20 disabled:cursor-not-allowed
-                             focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
-                  aria-label="Imagem anterior"
-                  type="button"
+                  className="absolute left-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border-hi bg-navy-alt/85 text-muted backdrop-blur-sm transition-all hover:border-gold-dk hover:text-gold disabled:cursor-not-allowed disabled:opacity-25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+                  aria-label={t('portfolio.prevImage')}
                 >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                    className="size-4">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
                 <button
+                  type="button"
                   onClick={() => setActiveImg(Math.min(activeImg + 1, images.length - 1))}
                   disabled={activeImg === images.length - 1}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center
-                             rounded-full border border-border-hi bg-navy-alt/80 backdrop-blur-sm
-                             text-muted hover:text-gold hover:border-gold-dk transition-all
-                             disabled:opacity-20 disabled:cursor-not-allowed
-                             focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
-                  aria-label="Próxima imagem"
-                  type="button"
+                  className="absolute right-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border-hi bg-navy-alt/85 text-muted backdrop-blur-sm transition-all hover:border-gold-dk hover:text-gold disabled:cursor-not-allowed disabled:opacity-25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+                  aria-label={t('portfolio.nextImage')}
                 >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                    className="size-4">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
               </>
             )}
 
-            {/* Image counter */}
             {images.length > 1 && (
-              <span className="absolute bottom-3 right-3 rounded-full bg-navy-alt/80
-                               px-2.5 py-1 text-[0.68rem] font-600 text-muted backdrop-blur-sm">
+              <span className="absolute bottom-3 right-3 rounded-full bg-navy-alt/88 px-2.5 py-1 text-[0.68rem] font-700 text-muted backdrop-blur-sm">
                 {activeImg + 1} / {images.length}
               </span>
             )}
           </div>
 
-          {/* Caption + description */}
-          <div className="px-6 py-5 flex flex-col gap-3">
-            {current?.caption && (
-              <p className="text-[0.74rem] italic text-dim">{current.caption}</p>
-            )}
+          <div className="flex flex-col gap-3 px-6 py-5">
+            {current?.caption && <p className="text-[0.74rem] italic text-dim">{current.caption}</p>}
             <p className="text-[0.88rem] leading-relaxed text-muted">{work.description}</p>
-            <p className="text-[0.73rem] text-dim capitalize">{formatDate(work.date)}</p>
+            <p className="text-[0.73rem] capitalize text-dim">{formatWorkMonth(work.date, lng)}</p>
           </div>
 
-          {/* ── Thumbnail strip ───────────────────────────── */}
           {images.length > 1 && (
             <div className="px-6 pb-6">
-              <p className="text-[0.62rem] font-700 uppercase tracking-[0.2em] text-dim mb-3">
-                Galeria · {images.length} imagens
+              <p className="mb-3 text-[0.62rem] font-800 uppercase tracking-[0.2em] text-dim">
+                {t('services.galleryThumbs', { count: images.length })}
               </p>
               <div
                 ref={stripRef}
-                className="flex gap-2 overflow-x-auto pb-1"
-                style={{ scrollbarWidth: 'none' }}
+                className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 role="list"
-                aria-label="Miniaturas"
+                aria-label={t('services.galleryThumbs', { count: images.length })}
               >
                 {images.map((img, i) => (
                   <ThumbButton
@@ -638,84 +566,76 @@ function WorkModal({
                     img={img}
                     index={i}
                     isActive={i === activeImg}
+                    beforeLabel={t('services.before')}
+                    afterLabel={t('services.after')}
                     onClick={() => setActiveImg(i)}
                   />
                 ))}
               </div>
             </div>
           )}
-
         </div>
       </div>
 
-      {/* Keyframe for image crossfade */}
       <style>{`
-        @keyframes imgFadeIn {
+        @keyframes svcImgFade {
           from { opacity: 0; transform: scale(1.02); }
-          to   { opacity: 1; transform: scale(1); }
+          to { opacity: 1; transform: scale(1); }
         }
       `}</style>
     </div>
   )
 }
 
-/* ─── ThumbButton ────────────────────────────────────────── */
 function ThumbButton({
   img,
   index,
   isActive,
+  beforeLabel,
+  afterLabel,
   onClick,
 }: {
   img: WorkImage
   index: number
   isActive: boolean
+  beforeLabel: string
+  afterLabel: string
   onClick: () => void
 }) {
+  const label = img.caption ?? `Image ${index + 1}`
+
   return (
     <button
       type="button"
       role="listitem"
       onClick={onClick}
-      aria-label={img.caption ?? `Imagem ${index + 1}`}
+      aria-label={label}
       aria-pressed={isActive}
-      className="relative shrink-0 overflow-hidden rounded-lg transition-all duration-200
-                 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+      className="relative shrink-0 overflow-hidden rounded-lg transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
       style={{
         width: 88,
         height: 62,
-        border: isActive
-          ? '2px solid var(--gold)'
-          : '2px solid var(--border)',
+        border: isActive ? '2px solid var(--gold)' : '2px solid var(--border)',
         transform: isActive ? 'scale(1.04)' : 'scale(1)',
-        opacity: isActive ? 1 : 0.6,
-        boxShadow: isActive ? '0 0 0 2px rgba(201,152,58,0.25)' : 'none',
+        opacity: isActive ? 1 : 0.62,
+        boxShadow: isActive ? '0 0 0 2px rgba(201,152,58,0.28)' : 'none',
       }}
     >
-      <img src={img.url} alt={img.caption ?? ''} className="size-full object-cover" loading="lazy" />
+      <img src={img.url} alt="" className="size-full object-cover" loading="lazy" />
 
-      {/* Before / Depois label */}
       {img.isBefore !== undefined && (
         <div
-          className="absolute bottom-0 left-0 right-0 py-0.5 text-center
-                     text-[0.55rem] font-700 uppercase tracking-wide"
+          className="absolute bottom-0 left-0 right-0 py-0.5 text-center text-[0.55rem] font-800 uppercase tracking-wide"
           style={{
-            background: img.isBefore ? 'rgba(0,0,0,0.75)' : 'rgba(201,152,58,0.75)',
-            color: img.isBefore ? 'rgba(255,255,255,0.72)' : '#0d1a27',
+            background: img.isBefore ? 'rgba(0,0,0,0.78)' : 'rgba(201,152,58,0.78)',
+            color: img.isBefore ? 'rgba(255,255,255,0.78)' : '#0d1a27',
           }}
         >
-          {img.isBefore ? 'Antes' : 'Depois'}
+          {img.isBefore ? beforeLabel : afterLabel}
         </div>
       )}
     </button>
   )
-}
-
-/* ─── Helpers ────────────────────────────────────────────── */
-function formatDate(date: string) {
-  return new Date(`${date}-01`).toLocaleDateString('pt-PT', {
-    month: 'long',
-    year: 'numeric',
-  })
 }
 
 function WaIcon() {
