@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, FormEvent, KeyboardEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom'
@@ -330,6 +330,40 @@ function AdminDrawer(p: AdminProps) {
 }
 
 /* ─── FAQ Item ───────────────────────────────────────────── */
+function HeroRotatingHeadline() {
+  const { t, i18n } = useTranslation()
+  const words = useMemo(() => {
+    const raw = t('hero.headlineWords', { returnObjects: true })
+    return Array.isArray(raw) ? (raw as string[]) : ['Precisão']
+  }, [t, i18n.language])
+
+  const [active, setActive] = useState(0)
+
+  useEffect(() => {
+    setActive(0)
+  }, [i18n.language])
+
+  useEffect(() => {
+    if (words.length <= 1) return
+    const id = window.setInterval(() => {
+      setActive(p => (p + 1) % words.length)
+    }, 2300)
+    return () => window.clearInterval(id)
+  }, [i18n.language, words.length])
+
+  return (
+    <h1 className="hero-title">
+      <span className="hero-line hero-rotator-line" aria-live="polite">
+        <span key={`${i18n.language}-${active}`} className="hero-rotator-text">
+          {words[active % words.length]}
+        </span>
+      </span>
+      <span className="hero-line">{t('hero.titleLine2')}</span>
+      <span className="hero-line gold">{t('hero.titleLine3')}</span>
+    </h1>
+  )
+}
+
 function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false)
   const bodyRef = useRef<HTMLDivElement>(null)
@@ -572,11 +606,7 @@ function AppShell(p: AppShellProps) {
           <div className="hero-texture" style={{ backgroundImage: `url(${IMG.texture})` }} aria-hidden="true" />
           <div className="hero-content page-wrap">
             <p className="eyebrow">{t('hero.kicker')}</p>
-            <h1 className="hero-title">
-              {t('hero.title').split('\n').map((line, i, arr) => (
-                <span key={i} className={i === arr.length - 1 ? 'hero-line gold' : 'hero-line'}>{line}</span>
-              ))}
-            </h1>
+            <HeroRotatingHeadline />
             <p className="hero-sub">{t('hero.subtitle')}</p>
             <a className="btn-gold btn-large hero-cta-btn" href={WHATSAPP} target="_blank" rel="noreferrer">
               <svg viewBox="0 0 24 24" fill="currentColor" className="wa-icon">
@@ -602,7 +632,6 @@ function AppShell(p: AppShellProps) {
               <p className="eyebrow">{t('nav.about')}</p>
               <h2 className="section-title">{t('about.title')}</h2>
               <p className="body-text">{t('about.text')}</p>
-              <span className="nif-badge">{t('about.nif')}</span>
               <div className="values-grid">
                 {p.values.map(v => (
                   <div key={v.n} className="value-card">
@@ -612,6 +641,7 @@ function AppShell(p: AppShellProps) {
                   </div>
                 ))}
               </div>
+              <span className="nif-badge">{t('about.nif')}</span>
             </div>
           </div>
         </section>
@@ -625,8 +655,8 @@ function AppShell(p: AppShellProps) {
             <div className="faq-left">
               <p className="eyebrow">FAQ</p>
               <h2 className="section-title">{t('faq.title')}</h2>
-              <p className="body-text" style={{ fontSize: '.95rem', marginTop: '.25rem' }}>{t('contact.ctaSub')}</p>
-              <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold" style={{ marginTop: '1rem', alignSelf: 'flex-start' }}>
+              <p className="faq-support-text">{t('contact.ctaSub')}</p>
+              <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold faq-cta-btn">
                 {t('actions.freeQuote')}
               </a>
             </div>
