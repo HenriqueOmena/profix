@@ -585,13 +585,10 @@ function WorkModal({
   }, [activeImg])
 
   return (
-    <div
-      className="fixed inset-0 z-[55] flex items-end justify-center sm:items-center"
-      style={{ padding: 'clamp(0px, 3vw, 24px)' }}
-    >
+    <div className="wm-wrapper">
       <div
-        className="absolute inset-0 bg-[rgba(2,6,12,0.88)] backdrop-blur-md"
-        style={{ opacity: workIn ? 1 : 0, transition: 'opacity 0.28s ease' }}
+        className="wm-backdrop"
+        style={{ opacity: workIn ? 1 : 0 }}
         onClick={onClose}
         aria-hidden
       />
@@ -600,96 +597,85 @@ function WorkModal({
         role="dialog"
         aria-modal="true"
         aria-label={work.title}
-        className="relative z-10 flex max-h-[94vh] flex-col overflow-hidden bg-navy-alt"
+        className="wm-dialog"
         style={{
-          width: 'min(880px, 100%)',
-          borderRadius: 'clamp(0.75rem, 2vw, 1.45rem)',
-          border: '1px solid var(--border-hi)',
-          boxShadow: '0 36px 120px rgba(0,0,0,0.72), 0 0 0 1px rgba(201,152,58,0.08)',
           transform: workIn ? 'translateY(0) scale(1)' : 'translateY(22px) scale(0.97)',
           opacity: workIn ? 1 : 0,
-          transition: 'transform 0.34s cubic-bezier(0.34, 1.35, 0.64, 1), opacity 0.26s ease',
         }}
       >
-        <div className="flex shrink-0 items-start gap-3 border-b border-border px-5 py-4 sm:px-6">
-          <div className="min-w-0 flex-1">
-            <p className="mb-0.5 text-[0.64rem] font-800 uppercase tracking-[0.2em] text-gold">{serviceName}</p>
-            <h3 className="text-[1.02rem] font-800 leading-snug text-body">{work.title}</h3>
+        {/* Gold top accent */}
+        <div className="wm-gold-line" aria-hidden />
+
+        {/* Header */}
+        <div className="wm-header">
+          <div className="wm-header-text">
+            <p className="wm-service-name">{serviceName}</p>
+            <h3 className="wm-work-title">{work.title}</h3>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border-hi text-sm text-muted transition-colors hover:border-gold-dk hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
-            aria-label={t('ui.close')}
-          >
+          <button type="button" onClick={onClose} className="wm-close" aria-label={t('ui.close')}>
             ✕
           </button>
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+        {/* Mode tabs */}
+        {hasSlider && (
+          <div className="wm-tabs">
+            <button
+              type="button"
+              onClick={() => setMode('slider')}
+              className={`wm-tab ${mode === 'slider' ? 'wm-tab-active' : ''}`}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="wm-tab-icon">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l-3 3 3 3m8-6l3 3-3 3" />
+              </svg>
+              Antes / Depois
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('gallery')}
+              className={`wm-tab ${mode === 'gallery' ? 'wm-tab-active' : ''}`}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="wm-tab-icon">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              Galeria
+            </button>
+          </div>
+        )}
 
-          {/* ── Mode tabs (only when before/after exists) ── */}
-          {hasSlider && (
-            <div className="flex shrink-0 gap-0 border-b border-border">
-              <button
-                type="button"
-                onClick={() => setMode('slider')}
-                className={`flex flex-1 items-center justify-center gap-2 py-2.5 text-[0.75rem] font-700 uppercase tracking-[0.14em] transition-colors ${
-                  mode === 'slider'
-                    ? 'border-b-2 border-gold text-gold'
-                    : 'text-muted hover:text-body'
-                }`}
-                style={{ marginBottom: mode === 'slider' ? -1 : 0 }}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 14, height: 14 }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l-3 3 3 3m8-6l3 3-3 3" />
-                </svg>
-                Antes / Depois
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode('gallery')}
-                className={`flex flex-1 items-center justify-center gap-2 py-2.5 text-[0.75rem] font-700 uppercase tracking-[0.14em] transition-colors ${
-                  mode === 'gallery'
-                    ? 'border-b-2 border-gold text-gold'
-                    : 'text-muted hover:text-body'
-                }`}
-                style={{ marginBottom: mode === 'gallery' ? -1 : 0 }}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 14, height: 14 }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-                Galeria
-              </button>
-            </div>
-          )}
+        {/* Scrollable content */}
+        <div className="wm-scroll">
 
-          {/* ── Slider mode ─────────────────────────────── */}
+          {/* Slider mode */}
           {mode === 'slider' && hasSlider && beforeImg && afterImg && (
             <>
               <BeforeAfterSlider before={beforeImg} after={afterImg} />
-              <div className="flex flex-col gap-3 px-6 py-5">
-                <div className="flex gap-6">
-                  <div className="flex-1">
-                    <p className="mb-0.5 text-[0.62rem] font-800 uppercase tracking-[0.16em] text-muted">Antes</p>
-                    <p className="text-[0.78rem] italic text-dim">{beforeImg.caption ?? '—'}</p>
+
+              <div className="wm-content">
+                <div className="wm-captions">
+                  <div className="wm-caption-col">
+                    <p className="wm-caption-label">Antes</p>
+                    <p className="wm-caption-text">{beforeImg.caption ?? '—'}</p>
                   </div>
-                  <div className="w-px bg-border" />
-                  <div className="flex-1">
-                    <p className="mb-0.5 text-[0.62rem] font-800 uppercase tracking-[0.16em] text-gold">Depois</p>
-                    <p className="text-[0.78rem] italic text-dim">{afterImg.caption ?? '—'}</p>
+                  <div className="wm-caption-divider" />
+                  <div className="wm-caption-col">
+                    <p className="wm-caption-label wm-caption-label-gold">Depois</p>
+                    <p className="wm-caption-text">{afterImg.caption ?? '—'}</p>
                   </div>
                 </div>
-                <p className="text-[0.88rem] leading-relaxed text-muted">{work.description}</p>
-                <p className="text-[0.73rem] capitalize text-dim">{formatWorkMonth(work.date, lng)}</p>
+
+                <div className="wm-description">
+                  <p className="wm-desc-text">{work.description}</p>
+                  <p className="wm-date">{formatWorkMonth(work.date, lng)}</p>
+                </div>
               </div>
             </>
           )}
 
-          {/* ── Gallery mode ─────────────────────────────── */}
+          {/* Gallery mode */}
           {mode === 'gallery' && (
             <>
-              <div className="relative shrink-0 overflow-hidden bg-[#030609]" style={{ aspectRatio: '16/9' }}>
+              <div className="wm-gallery-img">
                 <img
                   key={current?.id}
                   src={current?.url}
@@ -699,13 +685,7 @@ function WorkModal({
                 />
 
                 {current?.isBefore !== undefined && (
-                  <span
-                    className={`absolute left-3 top-3 rounded-full px-3 py-1 text-[0.68rem] font-800 uppercase tracking-wide backdrop-blur-sm ${
-                      current.isBefore
-                        ? 'border border-border bg-surface-hi/88 text-muted'
-                        : 'border border-gold-dk bg-[rgba(201,152,58,0.22)] text-gold'
-                    }`}
-                  >
+                  <span className={`wm-img-badge ${current.isBefore ? 'wm-img-badge-before' : 'wm-img-badge-after'}`}>
                     {current.isBefore ? t('services.before') : t('services.after')}
                   </span>
                 )}
@@ -716,7 +696,7 @@ function WorkModal({
                       type="button"
                       onClick={() => setActiveImg(Math.max(activeImg - 1, 0))}
                       disabled={activeImg === 0}
-                      className="absolute left-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border-hi bg-navy-alt/85 text-muted backdrop-blur-sm transition-all hover:border-gold-dk hover:text-gold disabled:cursor-not-allowed disabled:opacity-25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+                      className="wm-nav-btn wm-nav-prev"
                       aria-label={t('portfolio.prevImage')}
                     >
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
@@ -727,7 +707,7 @@ function WorkModal({
                       type="button"
                       onClick={() => setActiveImg(Math.min(activeImg + 1, images.length - 1))}
                       disabled={activeImg === images.length - 1}
-                      className="absolute right-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border-hi bg-navy-alt/85 text-muted backdrop-blur-sm transition-all hover:border-gold-dk hover:text-gold disabled:cursor-not-allowed disabled:opacity-25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+                      className="wm-nav-btn wm-nav-next"
                       aria-label={t('portfolio.nextImage')}
                     >
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
@@ -738,26 +718,26 @@ function WorkModal({
                 )}
 
                 {images.length > 1 && (
-                  <span className="absolute bottom-3 right-3 rounded-full bg-navy-alt/88 px-2.5 py-1 text-[0.68rem] font-700 text-muted backdrop-blur-sm">
-                    {activeImg + 1} / {images.length}
-                  </span>
+                  <span className="wm-img-counter">{activeImg + 1} / {images.length}</span>
                 )}
               </div>
 
-              <div className="flex flex-col gap-3 px-6 py-5">
-                {current?.caption && <p className="text-[0.74rem] italic text-dim">{current.caption}</p>}
-                <p className="text-[0.88rem] leading-relaxed text-muted">{work.description}</p>
-                <p className="text-[0.73rem] capitalize text-dim">{formatWorkMonth(work.date, lng)}</p>
+              <div className="wm-content">
+                {current?.caption && <p className="wm-caption-text" style={{ fontStyle: 'italic' }}>{current.caption}</p>}
+                <div className="wm-description">
+                  <p className="wm-desc-text">{work.description}</p>
+                  <p className="wm-date">{formatWorkMonth(work.date, lng)}</p>
+                </div>
               </div>
 
               {images.length > 1 && (
-                <div className="px-6 pb-6">
-                  <p className="mb-3 text-[0.62rem] font-800 uppercase tracking-[0.2em] text-dim">
+                <div className="wm-thumbs-section">
+                  <p className="wm-thumbs-label">
                     {t('services.galleryThumbs', { count: images.length })}
                   </p>
                   <div
                     ref={stripRef}
-                    className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                    className="wm-thumbs-strip"
                     role="list"
                     aria-label={t('services.galleryThumbs', { count: images.length })}
                   >
