@@ -306,8 +306,8 @@ function ServicePanel({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-[rgba(3,8,14,0.82)] backdrop-blur-[3px]"
-        style={{ opacity: panelIn ? 1 : 0, transition: 'opacity 0.36s ease' }}
+        className="sp-backdrop"
+        style={{ opacity: panelIn ? 1 : 0 }}
         onClick={onClose}
         aria-hidden
       />
@@ -319,225 +319,160 @@ function ServicePanel({
         aria-modal="true"
         aria-label={service.name}
         tabIndex={-1}
-        className="fixed bottom-0 right-0 top-0 z-50 flex flex-col outline-none"
+        className="sp-panel"
         style={{
-          width: 'min(780px, 100vw)',
-          background: 'var(--bg)',
-          borderLeft: '1px solid rgba(201,152,58,0.18)',
-          boxShadow: '-40px 0 120px rgba(0,0,0,0.65), inset 2px 0 0 rgba(201,152,58,0.14)',
-          transform: panelIn ? 'translateX(0)' : 'translateX(100%)',
-          transition: 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)',
+          transform: panelIn ? 'translateY(0)' : 'translateY(100%)',
         }}
       >
-        {/* ── Sticky header ─────────────────────────────── */}
-        <div
-          className="sticky top-0 z-10 shrink-0 backdrop-blur-xl"
-          style={{ background: 'rgba(5,12,22,0.92)', borderBottom: '1px solid var(--border)' }}
-        >
-          {/* Top bar: back + close */}
-          <div className="flex items-center justify-between gap-4 px-5 py-3 sm:px-7">
+        {/* Gold accent line at top */}
+        <div className="sp-gold-line" aria-hidden />
+
+        {/* ── Header ── */}
+        <div className="sp-header">
+          <div className="sp-drag-pill" />
+
+          <div className="sp-header-row">
             <button
               type="button"
               onClick={onClose}
-              className="flex items-center gap-2 text-[0.72rem] font-700 uppercase tracking-[0.16em] text-muted transition-colors hover:text-gold focus-visible:outline-none"
+              className="sp-back-btn"
+              aria-label={t('nav.services')}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="size-[14px]">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="size-3.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 12H5M12 5l-7 7 7 7" />
               </svg>
-              {t('services.backAll')}
             </button>
+
+            <div className="sp-tabs" role="tablist">
+              {services.map(svc => {
+                const isActive = svc.id === service.id
+                return (
+                  <button
+                    key={svc.id}
+                    ref={isActive ? activeTabRef : undefined}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => !isActive && onServiceChange(svc)}
+                    className={`sp-tab ${isActive ? 'sp-tab-active' : ''}`}
+                  >
+                    {svc.name.split(' ')[0]}
+                  </button>
+                )
+              })}
+            </div>
+
             <button
               type="button"
               onClick={onClose}
-              className="flex size-8 items-center justify-center rounded-full text-[0.78rem] text-muted transition-colors hover:text-gold focus-visible:outline-none"
-              style={{ border: '1px solid var(--border-hi)' }}
+              className="sp-close-btn"
               aria-label={t('ui.close')}
             >
               ✕
             </button>
           </div>
-
-          {/* Service switcher tabs */}
-          <div
-            className="flex overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            role="tablist"
-            aria-label="Seleccionar serviço"
-          >
-            {services.map(svc => {
-              const isActive = svc.id === service.id
-              // Abbreviate: first word of each service name
-              const shortName = svc.name.split(' ')[0]
-              return (
-                <button
-                  key={svc.id}
-                  ref={isActive ? activeTabRef : undefined}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => !isActive && onServiceChange(svc)}
-                  className="relative shrink-0 px-5 py-3 text-[0.68rem] font-800 uppercase tracking-[0.14em] transition-colors duration-200 focus-visible:outline-none"
-                  style={{
-                    color: isActive ? 'var(--gold)' : 'var(--dim)',
-                    borderBottom: isActive ? '2px solid var(--gold)' : '2px solid transparent',
-                    marginBottom: '-1px',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {shortName}
-                  {isActive && (
-                    /* Subtle glow under active tab */
-                    <span
-                      className="pointer-events-none absolute -bottom-1 left-1/2 h-3 w-16 -translate-x-1/2 rounded-full opacity-40 blur-md"
-                      style={{ background: 'var(--gold)' }}
-                    />
-                  )}
-                </button>
-              )
-            })}
-          </div>
         </div>
 
-        {/* ── Scrollable body ───────────────────────────── */}
-        <div ref={bodyRef} className="flex flex-1 flex-col overflow-y-auto overscroll-contain">
+        {/* ── Scrollable body ── */}
+        <div ref={bodyRef} className="sp-body">
 
-          {/* Hero image */}
-          <div className="relative shrink-0 overflow-hidden" style={{ aspectRatio: '21/9' }}>
+          {/* ── Hero ── */}
+          <div className="sp-hero">
             <img
               key={service.id}
               src={service.imageUrl}
               alt=""
-              className="size-full object-cover"
+              className="sp-hero-img"
               style={{ animation: 'panelHeroFade 0.45s ease' }}
             />
-            {/* Dark gradient for legibility */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-[rgba(5,12,22,0.38)] to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[rgba(5,12,22,0.15)] to-transparent" />
-            {/* Gold rule at bottom */}
+            <div className="sp-hero-overlay" />
+            <div className="sp-hero-shine" aria-hidden />
+
+            <div className="svc-card-badge" style={{ top: '1.1rem', right: '1.1rem' }}>
+              <span className="svc-card-badge-dot" />
+              {t('services.workCount', { count: activeWorks.length })}
+            </div>
+
             <div
-              className="absolute bottom-0 left-0 right-0 h-px"
-              style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(201,152,58,0.55) 25%, rgba(201,152,58,0.75) 50%, rgba(201,152,58,0.55) 75%, transparent 100%)' }}
-            />
-            {/* Text overlay */}
-            <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 sm:px-8 sm:pb-7">
-              <div className="mb-2 flex items-center gap-3">
-                <div className="h-px w-6 bg-gold/60" />
-                <p className="text-[0.6rem] font-800 uppercase tracking-[0.3em] text-gold">
-                  {t('services.panelKind')}
-                </p>
-              </div>
-              <h2
-                className="leading-[1.1] text-white drop-shadow-lg"
-                style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.75rem, 4vw, 2.4rem)', fontWeight: 700 }}
-              >
-                {service.name}
-              </h2>
-            </div>
-          </div>
-
-          {/* ── Description + sub-services ─────────────── */}
-          <div
-            className="px-6 py-7 sm:px-8"
-            key={`desc-${service.id}`}
-            style={{ animation: 'panelContentFade 0.35s ease' }}
-          >
-            <p className="mb-6 border-l-[3px] border-gold/50 pl-5 text-[0.9rem] leading-[1.95] text-muted">
-              {service.description}
-            </p>
-            <div>
-              <p className="mb-3 text-[0.6rem] font-800 uppercase tracking-[0.25em] text-gold/70">
-                {t('services.scopeTitle')}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {service.subServices.map(sub => (
-                  <span
-                    key={sub.id}
-                    className="rounded-full px-3 py-1 text-[0.73rem] font-600 text-muted"
-                    style={{ border: '1px solid var(--border-hi)', background: 'rgba(255,255,255,0.03)' }}
-                  >
-                    {sub.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* ── Works section ──────────────────────────── */}
-          <div
-            className="px-6 pb-6 pt-5 sm:px-8"
-            key={`works-${service.id}`}
-            style={{
-              borderTop: '1px solid var(--border)',
-              background: 'rgba(2,6,12,0.45)',
-              animation: 'panelContentFade 0.4s ease',
-            }}
-          >
-            {/* Section heading */}
-            <div className="mb-5 flex items-center gap-3">
-              <p className="text-[0.62rem] font-800 uppercase tracking-[0.25em] text-gold">
-                {t('portfolio.title')}
-              </p>
-              <div
-                className="h-px flex-1"
-                style={{ background: 'linear-gradient(90deg, rgba(201,152,58,0.35), transparent)' }}
-              />
-              <span
-                className="flex size-6 items-center justify-center rounded-full text-[0.68rem] font-800 text-gold"
-                style={{ background: 'rgba(201,152,58,0.12)', border: '1px solid rgba(201,152,58,0.22)' }}
-              >
-                {activeWorks.length}
-              </span>
-            </div>
-
-            {activeWorks.length === 0 ? (
-              <div
-                className="mb-6 flex flex-col items-center gap-4 rounded-[1.1rem] py-16 text-center"
-                style={{ border: '1px dashed var(--border-hi)', background: 'rgba(255,255,255,0.015)' }}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.1" className="size-10 opacity-20">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.16-5.16a2.25 2.25 0 013.18 0l5.16 5.16m-1.5-1.5l1.41-1.41a2.25 2.25 0 013.18 0l2.91 2.91M2.25 19.5h19.5M3.75 4.5h16.5a1.5 1.5 0 011.5 1.5v12a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5V6a1.5 1.5 0 011.5-1.5z" />
-                </svg>
-                <p className="max-w-[26ch] text-[0.84rem] text-muted">{t('services.emptyCategory')}</p>
-              </div>
-            ) : (
-              <div className="mb-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {activeWorks.map(work => (
-                  <WorkCard key={work.id} work={work} lng={lng} onClick={() => onWorkOpen(work)} />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* ── CTA band ───────────────────────────────── */}
-          <div className="px-6 py-6 sm:px-8">
-            <div
-              className="flex flex-col items-center gap-5 rounded-[1.3rem] px-6 py-8 text-center"
-              style={{
-                background: 'linear-gradient(150deg, rgba(201,152,58,0.07) 0%, rgba(3,8,14,0.8) 70%)',
-                border: '1px solid rgba(201,152,58,0.16)',
-                boxShadow: 'inset 0 1px 0 rgba(201,152,58,0.07)',
-              }}
+              key={`title-${service.id}`}
+              className="sp-hero-text"
+              style={{ animation: 'panelContentFade 0.38s ease' }}
             >
-              <div>
-                <p className="mb-1.5 text-[1rem] font-800 text-body">{t('services.ctaInterested')}</p>
-                <p className="text-[0.82rem] leading-relaxed text-muted">{t('services.ctaSub')}</p>
-              </div>
-              <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold">
-                <WaIcon />
-                {t('services.requestQuoteShort')}
-              </a>
+              <p className="sp-hero-kicker">{t('services.panelKind')}</p>
+              <h2 className="sp-hero-title">{service.name}</h2>
             </div>
           </div>
 
+          {/* ── Content ── */}
+          <div
+            key={`body-${service.id}`}
+            className="sp-content"
+            style={{ animation: 'panelContentFade 0.42s ease' }}
+          >
+
+            {/* Left: description + tags */}
+            <div className="sp-info">
+              <p className="sp-desc">{service.description}</p>
+
+              <div className="sp-scope">
+                <p className="sp-scope-label">{t('services.scopeTitle')}</p>
+                <div className="svc-card-tags">
+                  {service.subServices.map(sub => (
+                    <span key={sub.id} className="svc-card-tag">{sub.name}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right: works */}
+            <div className="sp-works">
+              <div className="sp-works-header">
+                <p className="sp-works-label">{t('portfolio.title')}</p>
+                {activeWorks.length > 0 && (
+                  <span className="sp-works-count">{activeWorks.length}</span>
+                )}
+              </div>
+
+              {activeWorks.length === 0 ? (
+                <div className="sp-works-empty">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="size-8 opacity-20">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.16-5.16a2.25 2.25 0 013.18 0l5.16 5.16m-1.5-1.5l1.41-1.41a2.25 2.25 0 013.18 0l2.91 2.91M2.25 19.5h19.5M3.75 4.5h16.5a1.5 1.5 0 011.5 1.5v12a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5V6a1.5 1.5 0 011.5-1.5z" />
+                  </svg>
+                  <p className="text-[0.84rem] text-muted">{t('services.emptyCategory')}</p>
+                </div>
+              ) : (
+                <div className="sp-works-grid">
+                  {activeWorks.map(work => (
+                    <WorkCard key={work.id} work={work} lng={lng} onClick={() => onWorkOpen(work)} />
+                  ))}
+                </div>
+              )}
+
+              {/* CTA */}
+              <div className="sp-cta">
+                <div className="sp-cta-inner">
+                  <div>
+                    <p className="sp-cta-title">{t('services.ctaInterested')}</p>
+                    <p className="sp-cta-sub">{t('services.ctaSub')}</p>
+                  </div>
+                  <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold">
+                    <WaIcon />
+                    {t('services.requestQuoteShort')}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <style>{`
         @keyframes panelHeroFade {
-          from { opacity: 0; transform: scale(1.03); }
+          from { opacity: 0; transform: scale(1.02); }
           to   { opacity: 1; transform: scale(1); }
         }
         @keyframes panelContentFade {
-          from { opacity: 0; transform: translateY(8px); }
+          from { opacity: 0; transform: translateY(4px); }
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
