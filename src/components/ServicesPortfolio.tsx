@@ -495,47 +495,33 @@ function WorkCard({ work, lng, onClick }: { work: PortfolioWork; lng: string; on
     <button
       type="button"
       onClick={onClick}
-      className="group overflow-hidden rounded-[1.1rem] border border-border bg-navy text-left transition-all duration-300 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_16px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(201,152,58,0.15)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+      className="wc-card group"
     >
       {/* Image area */}
-      <div className="relative overflow-hidden" style={{ aspectRatio: '16/9' }}>
-
+      <div className="wc-img-wrap">
         {hasBefore && beforeImg && afterImg ? (
-          /* ── Split before/after preview ── */
           <>
-            {/* After — full width base */}
-            <img src={afterImg.url} alt="" className="absolute inset-0 size-full object-cover transition-transform duration-[600ms] group-hover:scale-[1.05]" loading="lazy" draggable={false} />
-            {/* Before — clipped to left half */}
+            <img src={afterImg.url} alt="" className="wc-img" loading="lazy" draggable={false} />
             <div className="absolute inset-0 overflow-hidden" style={{ clipPath: 'inset(0 50% 0 0)' }}>
-              <img src={beforeImg.url} alt="" className="absolute inset-0 size-full object-cover transition-transform duration-[600ms] group-hover:scale-[1.05]" loading="lazy" draggable={false} />
+              <img src={beforeImg.url} alt="" className="wc-img" loading="lazy" draggable={false} />
             </div>
-            {/* Divider line */}
             <div className="pointer-events-none absolute bottom-0 top-0 z-10" style={{ left: '50%', transform: 'translateX(-50%)' }}>
               <div className="h-full w-px bg-gold/60" />
-              {/* Diamond handle */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex size-7 items-center justify-center rounded-full border border-gold/70 bg-navy-alt/90 shadow-lg backdrop-blur-sm">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 11, height: 11, color: 'var(--gold)' }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l-3 3 3 3m8-6l3 3-3 3" />
                 </svg>
               </div>
             </div>
-            {/* Labels */}
-            <span className="pointer-events-none absolute bottom-2.5 left-2.5 z-10 rounded bg-black/72 px-1.5 py-0.5 text-[0.58rem] font-800 uppercase tracking-[0.1em] text-white/80 backdrop-blur-sm">Antes</span>
-            <span className="pointer-events-none absolute bottom-2.5 right-2.5 z-10 rounded bg-[rgba(201,152,58,0.75)] px-1.5 py-0.5 text-[0.58rem] font-800 uppercase tracking-[0.1em] text-[#0d1a27] backdrop-blur-sm">Depois</span>
+            <span className="wc-label-before">Antes</span>
+            <span className="wc-label-after">Depois</span>
           </>
         ) : (
-          /* ── Single image ── */
-          <img
-            src={work.featuredImageUrl}
-            alt=""
-            className="size-full object-cover transition-transform duration-[600ms] group-hover:scale-[1.05]"
-            loading="lazy"
-          />
+          <img src={work.featuredImageUrl} alt="" className="wc-img" loading="lazy" />
         )}
 
-        {/* Hover overlay — "Ver projecto" button */}
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/50 opacity-0 backdrop-blur-[2px] transition-opacity duration-250 group-hover:opacity-100">
-          <span className="flex items-center gap-2 rounded-full border border-gold/60 bg-navy-alt/90 px-4 py-2 text-[0.76rem] font-700 text-gold shadow-lg">
+        <div className="wc-hover-overlay">
+          <span className="wc-hover-btn">
             {t('services.viewProject')}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="size-3.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -545,18 +531,12 @@ function WorkCard({ work, lng, onClick }: { work: PortfolioWork; lng: string; on
       </div>
 
       {/* Card body */}
-      <div className="flex items-center gap-3 px-4 py-3.5">
-        <div className="min-w-0 flex-1">
-          <h4 className="mb-0.5 line-clamp-1 text-[0.88rem] font-800 leading-snug text-body transition-colors duration-200 group-hover:text-gold">
-            {work.title}
-          </h4>
-          <p className="text-[0.7rem] capitalize text-dim">{dateLabel}</p>
+      <div className="wc-body">
+        <h4 className="wc-title">{work.title}</h4>
+        <div className="wc-meta">
+          <span className="wc-date">{dateLabel}</span>
+          {hasBefore && <span className="wc-ba-badge">Antes / Depois</span>}
         </div>
-        {hasBefore && (
-          <span className="shrink-0 rounded-full border border-gold/40 bg-gold/[0.08] px-2.5 py-1 text-[0.6rem] font-800 uppercase tracking-[0.12em] text-gold/80">
-            Antes/Depois
-          </span>
-        )}
       </div>
     </button>
   )

@@ -1062,6 +1062,160 @@ img { display: block; max-width: 100% }
   .sp-cta-inner { flex-direction: column; align-items: flex-start; text-align: left }
 }
 
+/* ─── WorkCard (inside panel) ────────────────────────────── */
+.wc-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--surface) 0%, rgba(13,26,39,0.98) 100%);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease,
+    box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.wc-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(201,152,58,0.45);
+  box-shadow:
+    0 16px 44px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(201,152,58,0.12);
+}
+.wc-card:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.wc-img-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+}
+
+.wc-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.wc-card:hover .wc-img {
+  transform: scale(1.05);
+}
+
+.wc-label-before,
+.wc-label-after {
+  position: absolute;
+  bottom: .6rem;
+  z-index: 10;
+  pointer-events: none;
+  border-radius: .28rem;
+  padding: .22rem .55rem;
+  font-size: .58rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.wc-label-before {
+  left: .6rem;
+  background: rgba(0,0,0,0.72);
+  color: rgba(255,255,255,0.82);
+}
+.wc-label-after {
+  right: .6rem;
+  background: rgba(201,152,58,0.78);
+  color: #0d1a27;
+}
+
+.wc-hover-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.48);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.wc-card:hover .wc-hover-overlay { opacity: 1 }
+
+.wc-hover-btn {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(201,152,58,0.55);
+  background: rgba(10,21,32,0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: .76rem;
+  font-weight: 700;
+  color: var(--gold);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+/* Card body */
+.wc-body {
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+  padding: .95rem 1rem 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent 40%);
+  background: linear-gradient(180deg, rgba(19,33,51,0.6) 0%, rgba(10,21,32,0.95) 100%);
+}
+
+.wc-title {
+  font-size: .88rem;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.2s;
+}
+.wc-card:hover .wc-title { color: var(--gold-lt) }
+
+.wc-meta {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  flex-wrap: wrap;
+}
+
+.wc-date {
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--dim);
+  text-transform: capitalize;
+}
+
+.wc-ba-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .2rem .6rem;
+  border-radius: .35rem;
+  border: 1px solid rgba(201,152,58,0.35);
+  background: rgba(201,152,58,0.08);
+  font-size: .6rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
 /* Works modal overlay */
 .svc-modal-overlay {
   position: fixed; inset: 0;
