@@ -36,6 +36,7 @@ export type ServiceCategory = {
 
 /* ─── CDN ────────────────────────────────────────────────── */
 const CDN = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663329997620'
+const LOCAL = '/portfolio'
 
 /* ─── Mock data ──────────────────────────────────────────── */
 export const SERVICES: ServiceCategory[] = [
@@ -73,7 +74,7 @@ export const SERVICES: ServiceCategory[] = [
     slug: 'pintura-acabamentos',
     name: 'Pintura e Acabamentos',
     description: 'Pintura interior e exterior, retoques e correção de imperfeições para melhorar a estética dos espaços.',
-    imageUrl: `${CDN}/zWxKZUbnJcQsUoHq.jpg`,
+    imageUrl: `${LOCAL}/sala-depois.jpeg`,
     subServices: [
       { id: 's5', name: 'Pintura interior' },
       { id: 's6', name: 'Pintura exterior' },
@@ -83,27 +84,17 @@ export const SERVICES: ServiceCategory[] = [
     works: [
       {
         id: 'p1',
-        title: 'Casa T3 Reformada — Funchal',
-        description: 'Renovação completa de pintura interior de apartamento T3. Inclui preparação de superfícies, massa corrida em todas as divisões, pintura final em duas demãos com tinta premium lavável. Resultado: espaço renovado com acabamento de alta qualidade.',
-        featuredImageUrl: `${CDN}/zWxKZUbnJcQsUoHq.jpg`,
+        title: 'Pintura Interior Apartamento — Funchal',
+        description: 'Pintura integral de apartamento com preparação de superfícies, massa corrida em todas as divisões e pintura final em duas demãos com tinta premium lavável. Parede de destaque em verde sage na sala, restantes divisões em cinza claro. Resultado: espaço moderno e luminoso.',
+        featuredImageUrl: `${LOCAL}/sala-depois.jpeg`,
         images: [
-          { id: 'i3', url: `${CDN}/miQnEEeDSmiFYpgB.jpeg`, caption: 'Estado inicial das paredes', isBefore: true },
-          { id: 'i4', url: `${CDN}/zWxKZUbnJcQsUoHq.jpg`, caption: 'Resultado final — sala principal', isBefore: false },
-          { id: 'i5', url: `${CDN}/jcABrHTXeUqnLBXY.jpeg`, caption: 'Detalhe de acabamento', isBefore: false },
+          { id: 'p1-1', url: `${LOCAL}/sala-antes.jpeg`, caption: 'Sala — paredes antigas com marcas', isBefore: true },
+          { id: 'p1-2', url: `${LOCAL}/sala-depois.jpeg`, caption: 'Sala — parede verde sage finalizada', isBefore: false },
+          { id: 'p1-3', url: `${LOCAL}/quarto-pintura.jpeg`, caption: 'Quarto — pintura cinza claro' },
+          { id: 'p1-4', url: `${LOCAL}/varanda-depois.jpeg`, caption: 'Quarto com varanda — acabamento final' },
+          { id: 'p1-5', url: `${LOCAL}/quarto-detalhe.jpeg`, caption: 'Detalhe — molduras e rodapés' },
         ],
-        date: '2024-12',
-        active: true,
-      },
-      {
-        id: 'p2',
-        title: 'Fachada Edifício 4 Pisos — Câmara de Lobos',
-        description: 'Pintura exterior de edifício residencial com produto anti-fungos e protecção UV adaptada ao clima da Madeira. Limpeza a pressão prévia, tratamento de fissuras com selante elástico e pintura final em duas demãos.',
-        featuredImageUrl: `${CDN}/jcABrHTXeUqnLBXY.jpeg`,
-        images: [
-          { id: 'i6', url: `${CDN}/oZepugZbFecnMfPJ.jpg`, caption: 'Fachada antes da intervenção', isBefore: true },
-          { id: 'i7', url: `${CDN}/jcABrHTXeUqnLBXY.jpeg`, caption: 'Resultado final', isBefore: false },
-        ],
-        date: '2024-10',
+        date: '2026-04',
         active: true,
       },
     ],
@@ -115,7 +106,7 @@ export const SERVICES: ServiceCategory[] = [
     slug: 'reformas-remodelacoes',
     name: 'Reformas e Remodelações',
     description: 'Reformas parciais ou completas de casas e apartamentos, com foco na valorização de imóveis.',
-    imageUrl: `${CDN}/CHCgVzpzvYOasoJp.jpeg`,
+    imageUrl: `${LOCAL}/cozinha-depois.jpeg`,
     subServices: [
       { id: 's9', name: 'Remodelação de cozinhas' },
       { id: 's10', name: 'Casas de banho' },
@@ -125,28 +116,19 @@ export const SERVICES: ServiceCategory[] = [
     works: [
       {
         id: 'rv1',
-        title: 'Remodelação Completa T2 — Funchal',
-        description: 'Renovação total de apartamento T2 incluindo cozinha, 2 casas de banho e sala. Novo pavimento em microcimento, azulejos de grande formato, iluminação embutida LED e carpintaria de interiores à medida. Projecto concluído em 6 semanas.',
-        featuredImageUrl: `${CDN}/CHCgVzpzvYOasoJp.jpeg`,
+        title: 'Remodelação Integral Apartamento — Funchal',
+        description: 'Renovação completa de apartamento incluindo cozinha, casa de banho, sala e quartos. Instalação de pavimento flutuante, pintura integral com cores personalizadas, substituição de porta de entrada com fechadura digital, e renovação de armários embutidos. Projecto concluído em 5 semanas.',
+        featuredImageUrl: `${LOCAL}/cozinha-depois.jpeg`,
         images: [
-          { id: 'i8', url: `${CDN}/miQnEEeDSmiFYpgB.jpeg`, caption: 'Cozinha — estado inicial', isBefore: true },
-          { id: 'i9', url: `${CDN}/CHCgVzpzvYOasoJp.jpeg`, caption: 'Cozinha renovada', isBefore: false },
-          { id: 'i10', url: `${CDN}/jcABrHTXeUqnLBXY.jpeg`, caption: 'Casa de banho renovada', isBefore: false },
-          { id: 'i11', url: `${CDN}/oZepugZbFecnMfPJ.jpg`, caption: 'Detalhe pavimento microcimento', isBefore: false },
+          { id: 'rv1-1', url: `${LOCAL}/cozinha-antes.jpeg`, caption: 'Cozinha e roupeiro — estado inicial', isBefore: true },
+          { id: 'rv1-2', url: `${LOCAL}/cozinha-depois.jpeg`, caption: 'Cozinha e roupeiro — renovados', isBefore: false },
+          { id: 'rv1-3', url: `${LOCAL}/entrada-antes.jpeg`, caption: 'Entrada — porta antiga', isBefore: true },
+          { id: 'rv1-4', url: `${LOCAL}/entrada-depois.jpeg`, caption: 'Entrada — porta nova com fechadura digital', isBefore: false },
+          { id: 'rv1-5', url: `${LOCAL}/wc-antes.jpeg`, caption: 'Casa de banho — estado original' },
+          { id: 'rv1-6', url: `${LOCAL}/quarto-detalhe.jpeg`, caption: 'Quarto — molduras e acabamentos' },
+          { id: 'rv1-7', url: `${LOCAL}/varanda-depois.jpeg`, caption: 'Quarto com varanda — resultado final' },
         ],
-        date: '2025-01',
-        active: true,
-      },
-      {
-        id: 'rv2',
-        title: 'Reabilitação Espaço Comercial — Av. do Mar',
-        description: 'Reabilitação integral de loja de 120m² com criação de zona de atendimento, dois escritórios privativos e sala de reuniões. Inclui instalações técnicas, pavimento vinílico e tecto falso com iluminação embutida.',
-        featuredImageUrl: `${CDN}/miQnEEeDSmiFYpgB.jpeg`,
-        images: [
-          { id: 'i12', url: `${CDN}/miQnEEeDSmiFYpgB.jpeg`, caption: 'Espaço em funcionamento', isBefore: false },
-          { id: 'i13', url: `${CDN}/wLsmmQYLwyBEYZJG.jpg`, caption: 'Detalhe zona de reuniões', isBefore: false },
-        ],
-        date: '2024-08',
+        date: '2026-04',
         active: true,
       },
     ],
