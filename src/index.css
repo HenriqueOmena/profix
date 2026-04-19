@@ -1092,7 +1092,8 @@ img { display: block; max-width: 100% }
   background: linear-gradient(145deg, rgba(201,152,58,0.07) 0%, rgba(13,26,39,0.92) 60%);
   box-shadow: 0 4px 24px rgba(0,0,0,0.25), 0 0 0 1px rgba(201,152,58,0.06) inset;
 }
-.sp-cta-inner > div { flex: 1; min-width: 0; }
+.sp-cta { align-self: flex-start; }
+.sp-cta-inner > div { min-width: 0; }
 .sp-cta-inner > a   { flex-shrink: 0; }
 
 .sp-cta-title {
@@ -1148,7 +1149,7 @@ img { display: block; max-width: 100% }
   position: relative;
   overflow: hidden;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 9;
 }
 
 .wc-img {
