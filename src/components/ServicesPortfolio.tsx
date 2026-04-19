@@ -892,7 +892,7 @@ function BeforeAfterSlider({ before, after }: { before: WorkImage; after: WorkIm
       <img
         src={after.url}
         alt={after.caption ?? 'Depois'}
-        className="absolute inset-0 size-full object-contain"
+        className="absolute inset-0 size-full object-cover"
         draggable={false}
       />
 
@@ -904,7 +904,7 @@ function BeforeAfterSlider({ before, after }: { before: WorkImage; after: WorkIm
         <img
           src={before.url}
           alt={before.caption ?? 'Antes'}
-          className="absolute inset-0 size-full object-contain"
+          className="absolute inset-0 size-full object-cover"
           draggable={false}
         />
       </div>
