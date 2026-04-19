@@ -343,21 +343,9 @@ function ServicePanel({
         {/* Gold accent line at top */}
         <div className="sp-gold-line" aria-hidden />
 
-        {/* ── Header (minimal) ── */}
+        {/* ── Header (drag pill only) ── */}
         <div className="sp-header">
           <div className="sp-drag-pill" />
-          <div className="sp-header-row">
-            <button
-              type="button"
-              onClick={onClose}
-              className="sp-close-btn"
-              aria-label={t('ui.close')}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
         </div>
 
         {/* ── Scrollable body ── */}
@@ -374,6 +362,18 @@ function ServicePanel({
             />
             <div className="sp-hero-overlay" />
             <div className="sp-hero-shine" aria-hidden />
+
+            {/* Close button — floats over image */}
+            <button
+              type="button"
+              onClick={onClose}
+              className="sp-close-btn"
+              aria-label={t('ui.close')}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
 
             <div className="svc-card-badge" style={{ top: '1.1rem', right: '1.1rem' }}>
               <span className="svc-card-badge-dot" />
