@@ -74,7 +74,7 @@ export const SERVICES: ServiceCategory[] = [
     slug: 'pintura-acabamentos',
     name: 'Pintura e Acabamentos',
     description: 'Pintura interior e exterior, retoques e correção de imperfeições para melhorar a estética dos espaços.',
-    imageUrl: `${LOCAL}/sala-depois.jpeg`,
+    imageUrl: `${CDN}/zWxKZUbnJcQsUoHq.jpg`,
     subServices: [
       { id: 's5', name: 'Pintura interior' },
       { id: 's6', name: 'Pintura exterior' },
@@ -106,7 +106,7 @@ export const SERVICES: ServiceCategory[] = [
     slug: 'reformas-remodelacoes',
     name: 'Reformas e Remodelações',
     description: 'Reformas parciais ou completas de casas e apartamentos, com foco na valorização de imóveis.',
-    imageUrl: `${LOCAL}/cozinha-depois.jpeg`,
+    imageUrl: `${CDN}/CHCgVzpzvYOasoJp.jpeg`,
     subServices: [
       { id: 's9', name: 'Remodelação de cozinhas' },
       { id: 's10', name: 'Casas de banho' },
