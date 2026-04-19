@@ -777,10 +777,10 @@ img { display: block; max-width: 100% }
 }
 
 /* Header */
+/* ── Minimal header (close only) ── */
 .sp-header {
   flex-shrink: 0;
   border-radius: 1.15rem 1.15rem 0 0;
-  border-bottom: 1px solid var(--border);
   background: rgba(8,15,26,0.97);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -791,33 +791,44 @@ img { display: block; max-width: 100% }
   height: 3px;
   border-radius: 2px;
   background: rgba(255,255,255,0.12);
-  margin: .72rem auto .48rem;
+  margin: .62rem auto .2rem;
 }
 
 .sp-header-row {
   display: flex;
-  align-items: stretch;
+  justify-content: flex-end;
+  padding: 0 .5rem .35rem;
 }
 
-.sp-back-btn {
+.sp-close-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
   color: var(--dim);
   background: none;
-  border: none;
-  border-right: 1px solid var(--border);
-  transition: color 0.18s;
+  border: 1px solid var(--border);
+  border-radius: 50%;
   cursor: pointer;
+  transition: color 0.18s, border-color 0.18s, background 0.18s;
 }
-.sp-back-btn:hover { color: var(--gold) }
-.sp-back-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px }
+.sp-close-btn:hover {
+  color: var(--gold);
+  border-color: var(--gold-dk);
+  background: rgba(201,152,58,0.08);
+}
+.sp-close-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }
 
+/* ── Service tabs (inline, above works) ── */
+.sp-service-tabs {
+  padding: 0 1.75rem;
+  border-bottom: 1px solid var(--border);
+}
 .sp-tabs {
   display: flex;
-  flex: 1;
+  gap: .25rem;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -825,10 +836,13 @@ img { display: block; max-width: 100% }
 
 .sp-tab {
   flex-shrink: 0;
-  padding: .78rem 1rem;
-  font-size: .63rem;
-  font-weight: 800;
-  letter-spacing: .14em;
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .7rem .9rem;
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--dim);
   background: none;
@@ -845,22 +859,14 @@ img { display: block; max-width: 100% }
   border-bottom-color: var(--gold) !important;
 }
 
-.sp-close-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
+.sp-tab-icon {
+  width: 15px;
+  height: 15px;
   flex-shrink: 0;
-  font-size: .82rem;
-  color: var(--dim);
-  background: none;
-  border: none;
-  border-left: 1px solid var(--border);
-  cursor: pointer;
-  transition: color 0.18s;
+  opacity: .6;
+  transition: opacity 0.18s;
 }
-.sp-close-btn:hover { color: var(--gold) }
-.sp-close-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px }
+.sp-tab-active .sp-tab-icon { opacity: 1 }
 
 /* Scrollable body */
 .sp-body {
@@ -1058,6 +1064,9 @@ img { display: block; max-width: 100% }
 @media (max-width: 600px) {
   .sp-hero-text { padding: 1.5rem 1.2rem 1rem }
   .sp-info { padding: 1.2rem }
+  .sp-service-tabs { padding: 0 1.2rem }
+  .sp-tab { padding: .6rem .65rem; font-size: .56rem; gap: .3rem }
+  .sp-tab-icon { width: 13px; height: 13px }
   .sp-works { padding: 1.2rem 1.2rem 0 }
   .sp-cta-inner { flex-direction: column; align-items: flex-start; text-align: left }
 }

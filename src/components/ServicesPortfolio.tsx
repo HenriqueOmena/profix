@@ -6,6 +6,29 @@ import type { ServiceCategory, PortfolioWork, WorkImage } from '../data/services
 
 const WHATSAPP = 'https://wa.me/351936284583'
 
+const SERVICE_ICONS: Record<string, React.ReactNode> = {
+  repairs: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="sp-tab-icon">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085" />
+    </svg>
+  ),
+  painting: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="sp-tab-icon">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+    </svg>
+  ),
+  renovation: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="sp-tab-icon">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819" />
+    </svg>
+  ),
+  engineering: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="sp-tab-icon">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15a2.25 2.25 0 012.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+    </svg>
+  ),
+}
+
 function BadgePill({ variant, className = '', style }: { variant: 'before' | 'after'; className?: string; style?: React.CSSProperties }) {
   return (
     <span className={`ba-pill ${variant === 'before' ? 'ba-pill-before' : 'ba-pill-after'} ${className}`} style={style}>
@@ -335,48 +358,19 @@ function ServicePanel({
         {/* Gold accent line at top */}
         <div className="sp-gold-line" aria-hidden />
 
-        {/* ── Header ── */}
+        {/* ── Header (minimal) ── */}
         <div className="sp-header">
           <div className="sp-drag-pill" />
-
           <div className="sp-header-row">
-            <button
-              type="button"
-              onClick={onClose}
-              className="sp-back-btn"
-              aria-label={t('nav.services')}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="size-3.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 12H5M12 5l-7 7 7 7" />
-              </svg>
-            </button>
-
-            <div className="sp-tabs" role="tablist">
-              {services.map(svc => {
-                const isActive = svc.id === service.id
-                return (
-                  <button
-                    key={svc.id}
-                    ref={isActive ? activeTabRef : undefined}
-                    type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    onClick={() => !isActive && onServiceChange(svc)}
-                    className={`sp-tab ${isActive ? 'sp-tab-active' : ''}`}
-                  >
-                    {svc.name.split(' ')[0]}
-                  </button>
-                )
-              })}
-            </div>
-
             <button
               type="button"
               onClick={onClose}
               className="sp-close-btn"
               aria-label={t('ui.close')}
             >
-              ✕
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
         </div>
@@ -432,7 +426,30 @@ function ServicePanel({
               </div>
             </div>
 
-            {/* Right: works */}
+            {/* Service tabs (above works) */}
+            <div className="sp-service-tabs">
+              <div className="sp-tabs" role="tablist">
+                {services.map(svc => {
+                  const isActive = svc.id === service.id
+                  return (
+                    <button
+                      key={svc.id}
+                      ref={isActive ? activeTabRef : undefined}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      onClick={() => !isActive && onServiceChange(svc)}
+                      className={`sp-tab ${isActive ? 'sp-tab-active' : ''}`}
+                    >
+                      {SERVICE_ICONS[svc.id]}
+                      <span>{svc.name.split(' ')[0]}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Works section */}
             <div className="sp-works">
               <div className="sp-works-header">
                 <p className="sp-works-label">{t('portfolio.title')}</p>
