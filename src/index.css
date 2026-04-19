@@ -1107,30 +1107,51 @@ img { display: block; max-width: 100% }
   transform: scale(1.05);
 }
 
-.wc-label-before,
-.wc-label-after {
+/* ── BadgePill – single reusable "Antes / Depois" pill ── */
+.ba-pill {
+  pointer-events: none;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: .28rem .7rem;
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: opacity .15s;
+}
+.ba-pill-before {
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(13,26,39,0.82);
+  color: rgba(255,255,255,0.84);
+}
+.ba-pill-after {
+  border: 1px solid var(--gold-dk);
+  background: rgba(201,152,58,0.22);
+  color: var(--gold);
+}
+
+/* Position overrides inside WorkCard thumbnails */
+.wc-img-wrap .ba-pill {
   position: absolute;
   bottom: .6rem;
-  z-index: 10;
-  pointer-events: none;
-  border-radius: .28rem;
-  padding: .22rem .55rem;
-  font-size: .58rem;
-  font-weight: 800;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
-.wc-label-before {
-  left: .6rem;
-  background: rgba(0,0,0,0.72);
-  color: rgba(255,255,255,0.82);
+.wc-img-wrap .ba-pill-before { left: .6rem; }
+.wc-img-wrap .ba-pill-after  { right: .6rem; }
+
+/* Position overrides inside BeforeAfterSlider (modal) */
+.ba-pill-slider-left {
+  position: absolute;
+  left: 1.4rem;
+  top: 1rem;
 }
-.wc-label-after {
-  right: .6rem;
-  background: rgba(201,152,58,0.78);
-  color: #0d1a27;
+.ba-pill-slider-right {
+  position: absolute;
+  right: 1.4rem;
+  top: 1rem;
 }
 
 .wc-hover-overlay {

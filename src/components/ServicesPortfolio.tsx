@@ -6,6 +6,14 @@ import type { ServiceCategory, PortfolioWork, WorkImage } from '../data/services
 
 const WHATSAPP = 'https://wa.me/351936284583'
 
+function BadgePill({ variant, className = '', style }: { variant: 'before' | 'after'; className?: string; style?: React.CSSProperties }) {
+  return (
+    <span className={`ba-pill ${variant === 'before' ? 'ba-pill-before' : 'ba-pill-after'} ${className}`} style={style}>
+      {variant === 'before' ? 'Antes' : 'Depois'}
+    </span>
+  )
+}
+
 type View = 'catalog' | 'service' | 'work'
 
 const localeMap: Record<string, string> = {
@@ -513,8 +521,8 @@ function WorkCard({ work, lng, onClick }: { work: PortfolioWork; lng: string; on
                 </svg>
               </div>
             </div>
-            <span className="wc-label-before">Antes</span>
-            <span className="wc-label-after">Depois</span>
+            <BadgePill variant="before" />
+            <BadgePill variant="after" />
           </>
         ) : (
           <img src={work.featuredImageUrl} alt="" className="wc-img" loading="lazy" />
@@ -902,18 +910,16 @@ function BeforeAfterSlider({ before, after }: { before: WorkImage; after: WorkIm
       </div>
 
       {/* Labels */}
-      <span
-        className="pointer-events-none absolute left-5 top-4 rounded-full border border-border bg-surface-hi/88 px-3.5 py-1.5 text-[0.66rem] font-800 uppercase tracking-[0.14em] text-muted backdrop-blur-md"
-        style={{ opacity: position > 8 ? 1 : 0, transition: 'opacity 0.15s' }}
-      >
-        Antes
-      </span>
-      <span
-        className="pointer-events-none absolute right-5 top-4 rounded-full border border-gold-dk bg-[rgba(201,152,58,0.22)] px-3.5 py-1.5 text-[0.66rem] font-800 uppercase tracking-[0.14em] text-gold backdrop-blur-md"
-        style={{ opacity: position < 92 ? 1 : 0, transition: 'opacity 0.15s' }}
-      >
-        Depois
-      </span>
+      <BadgePill
+        variant="before"
+        className="ba-pill-slider-left"
+        style={{ opacity: position > 8 ? 1 : 0 }}
+      />
+      <BadgePill
+        variant="after"
+        className="ba-pill-slider-right"
+        style={{ opacity: position < 92 ? 1 : 0 }}
+      />
 
       {/* Divider line */}
       <div
