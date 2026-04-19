@@ -6,7 +6,6 @@ import './i18n'
 
 import ServicesPortfolio  from './components/ServicesPortfolio'
 import ServiceDetailPage  from './pages/ServiceDetailPage'
-import PortfolioPage      from './pages/PortfolioPage'
 
 /* ─── Types ──────────────────────────────────────────────── */
 type Locale = 'pt' | 'en' | 'de' | 'fr'
@@ -194,7 +193,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
 /* ─── Services Section ───────────────────────────────────────
    Catalog + card grid → see src/components/ServicesSection.tsx
    ServiceDetailPage   → see src/pages/ServiceDetailPage.tsx
-   PortfolioPage       → see src/pages/PortfolioPage.tsx
+   (PortfolioPage removed — works accessible via ServicePanel)
    ─────────────────────────────────────────────────────────── */
 
 /* ServicesSection, ServiceCard, ServiceWorksModal → components/ServicesSection.tsx + pages/ */
@@ -562,11 +561,6 @@ function AppShell(p: AppShellProps) {
                   onClick={() => p.setNavOpen(v => !v && false)}>
                   {t(`nav.${k}`)}
                 </a>
-                {k === 'services' && (
-                  <Link to="/trabalhos" className="nav-link" onClick={() => p.setNavOpen(v => !v && false)}>
-                    {t('nav.portfolio')}
-                  </Link>
-                )}
               </React.Fragment>
             ))}
           </nav>
@@ -593,11 +587,6 @@ function AppShell(p: AppShellProps) {
                 onClick={() => p.setNavOpen(v => !v && false)}>
                 {t(`nav.${k}`)}
               </a>
-              {k === 'services' && (
-                <Link to="/trabalhos" className="mobile-link" onClick={() => p.setNavOpen(v => !v && false)}>
-                  {t('nav.portfolio')}
-                </Link>
-              )}
             </React.Fragment>
           ))}
           <div className="mobile-lang-row">
@@ -618,7 +607,6 @@ function AppShell(p: AppShellProps) {
 
       <Routes>
         <Route path="/servicos/:slug" element={<ServiceDetailPage />} />
-        <Route path="/trabalhos" element={<PortfolioPage />} />
         <Route path="/" element={<><main>
         {/* ── Hero ─────────────────────────────────────────── */}
         <section id="hero" className="hero-section"

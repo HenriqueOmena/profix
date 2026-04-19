@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
-import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { SERVICES } from '../data/services'
 import type { ServiceCategory, PortfolioWork, WorkImage } from '../data/services'
@@ -153,16 +152,6 @@ export default function ServicesPortfolio() {
             ))}
           </div>
 
-          {/* ── Bottom CTA ─────────────────────────────────── */}
-          <div className="svc-bottom-cta">
-            <div className="svc-bottom-line" aria-hidden />
-            <Link to="/trabalhos" className="svc-all-works-link">
-              <span>{t('portfolio.allWorksCompleted')}</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="svc-arrow-icon">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -264,13 +253,30 @@ function ServiceCard({
       <div className="svc-card-body">
         <p className="svc-card-desc">{service.description}</p>
 
-        <div className="svc-card-tags">
+        <div className="svc-card-tags svc-card-tags-sm">
           {service.subServices.map(sub => (
             <span key={sub.id} className="svc-card-tag">
               {sub.name}
             </span>
           ))}
         </div>
+
+        {/* Work thumbnails (max 3) */}
+        {service.works.filter(w => w.active).length > 0 && (
+          <div className="svc-card-thumbs">
+            {service.works.filter(w => w.active).slice(0, 3).map(work => (
+              <div key={work.id} className="svc-card-thumb">
+                <img src={work.featuredImageUrl} alt={work.title} loading="lazy" />
+              </div>
+            ))}
+            <span className="svc-card-thumbs-label">
+              {t('services.viewWorksCta')}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" className="size-3">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </span>
+          </div>
+        )}
 
         <div className="svc-card-footer">
           <button
