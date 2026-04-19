@@ -177,6 +177,7 @@ function LangDropdown() {
 
 /* ─── Lightbox ───────────────────────────────────────────── */
 function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
+  const { t } = useTranslation()
   useEffect(() => {
     const h = (e: globalThis.KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', h)
@@ -184,7 +185,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
   }, [onClose])
   return (
     <div className="lightbox-overlay" onClick={onClose} role="dialog" aria-modal="true">
-      <button className="lightbox-close" onClick={onClose} aria-label="Fechar">✕</button>
+      <button className="lightbox-close" onClick={onClose} aria-label={t('ui.close')}>✕</button>
       <img src={src} alt="" className="lightbox-img" onClick={e => e.stopPropagation()} />
     </div>
   )
@@ -226,7 +227,7 @@ function AdminDrawer(p: AdminProps) {
       <aside className={`admin-drawer ${p.isOpen ? 'is-open' : ''}`} role="dialog" aria-modal="true" onKeyDown={onKey}>
         <div className="drawer-header">
           <h2 className="drawer-title">{t('admin.title')}</h2>
-          <button className="drawer-close" onClick={p.onClose} aria-label="Fechar">✕</button>
+          <button className="drawer-close" onClick={p.onClose} aria-label={t('ui.close')}>✕</button>
         </div>
 
         {!p.isAuthenticated ? (
@@ -268,7 +269,7 @@ function AdminDrawer(p: AdminProps) {
                     <div key={svc.id} className="service-admin-row">
                       <div>
                         <p className="service-admin-name">{svc.name}</p>
-                        <p className="hint-text">{svc.works.length} trabalhos</p>
+                        <p className="hint-text">{t('services.workCount', { count: svc.works.length })}</p>
                       </div>
                       <button className="btn-danger-sm" type="button"
                         onClick={() => { if (window.confirm(t('admin.confirmDelete'))) p.onDeleteService(svc.id) }}>
@@ -300,7 +301,7 @@ function AdminDrawer(p: AdminProps) {
                     placeholder={t('admin.workDescription')} />
                   <label className="field-label">{t('admin.chooseImage')}</label>
                   <input ref={fileRef} className="field-file" type="file" accept="image/*" onChange={p.onWorkImageChange} />
-                  {p.newWork.imageData && <img src={p.newWork.imageData} alt="preview" className="image-preview" />}
+                  {p.newWork.imageData && <img src={p.newWork.imageData} alt="" className="image-preview" />}
                   {p.imageError && <p className="field-error">{p.imageError}</p>}
                   <button className="btn-outline w-full" type="submit">{t('admin.addWork')}</button>
                 </form>
@@ -553,7 +554,7 @@ function AppShell(p: AppShellProps) {
           <Link to="/" className="nav-logo-link" aria-label="ProFix Madeira">
             <ProFixLogo />
           </Link>
-          <nav className="nav-links" aria-label="Main">
+          <nav className="nav-links" aria-label={t('nav.ariaMain')}>
             {p.navLinks.map(k => (
               <React.Fragment key={k}>
                 <a href={isHome ? `#${k}` : `/#${k}`}
@@ -573,7 +574,7 @@ function AppShell(p: AppShellProps) {
               WhatsApp
             </a>
             <button className={`hamburger ${p.navOpen ? 'is-open' : ''}`}
-              onClick={() => p.setNavOpen(v => !v)} aria-label="Menu" type="button">
+              onClick={() => p.setNavOpen(v => !v)} aria-label={t('nav.menu')} type="button">
               <span /><span /><span />
             </button>
           </div>
@@ -630,10 +631,10 @@ function AppShell(p: AppShellProps) {
         <section id="about" className="section page-wrap">
           <div className="about-grid">
             <div className="about-photo-wrap">
-              <img src={IMG.about} alt="Trabalho ProFix Madeira" className="about-photo" />
+              <img src={IMG.about} alt={t('about.photoAlt')} className="about-photo" />
               <div className="about-photo-badge">
                 <span className="badge-num">+10</span>
-                <span className="badge-lbl">anos<br />experiência</span>
+                <span className="badge-lbl">{t('about.yearsLine1')}<br />{t('about.yearsLine2')}</span>
               </div>
             </div>
             <div className="about-right">
@@ -672,11 +673,11 @@ function AppShell(p: AppShellProps) {
               <div className="faq-stat-col">
                 <div className="faq-stat">
                   <span className="faq-stat-num">+10</span>
-                  <span className="faq-stat-lbl">anos experiência</span>
+                  <span className="faq-stat-lbl">{t('faq.yearsExp')}</span>
                 </div>
                 <div className="faq-stat">
                   <span className="faq-stat-num">24h</span>
-                  <span className="faq-stat-lbl">resposta garantida</span>
+                  <span className="faq-stat-lbl">{t('faq.guaranteedResponse')}</span>
                 </div>
               </div>
             </div>

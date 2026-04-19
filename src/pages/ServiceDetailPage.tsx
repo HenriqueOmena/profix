@@ -1,7 +1,7 @@
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
-import { getCategoryBySlug, getPortfolioPreview } from '../data/mock'
+import { useCategoryBySlug, usePortfolioPreview } from '../data/mock'
 
 const WHATSAPP = 'https://wa.me/351936284583'
 
@@ -31,9 +31,10 @@ function IconWA() {
 }
 
 function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
+  const { t } = useTranslation()
   return (
     <div className="lightbox-overlay" onClick={onClose} role="dialog" aria-modal="true">
-      <button className="lightbox-close" onClick={onClose} aria-label="Fechar">✕</button>
+      <button className="lightbox-close" onClick={onClose} aria-label={t('ui.close')}>✕</button>
       <img src={src} alt="" className="lightbox-img" onClick={e => e.stopPropagation()} />
     </div>
   )
@@ -45,8 +46,8 @@ export default function ServiceDetailPage() {
   const { t } = useTranslation()
   const [lightbox, setLightbox] = useState<string | null>(null)
 
-  const category = slug ? getCategoryBySlug(slug) : undefined
-  const preview  = category ? getPortfolioPreview(category.id, 6) : []
+  const category = useCategoryBySlug(slug)
+  const preview  = usePortfolioPreview(category?.id ?? '', 6)
 
   if (!category) {
     return (

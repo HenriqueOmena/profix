@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SERVICES } from '../data/services'
+import { useLocalizedServices } from '../data/services'
 import type { ServiceCategory, PortfolioWork, WorkImage } from '../data/services'
 
 const WHATSAPP = 'https://wa.me/351936284583'
@@ -29,9 +29,10 @@ const SERVICE_ICONS: Record<string, React.ReactNode> = {
 }
 
 function BadgePill({ variant, className = '', style }: { variant: 'before' | 'after'; className?: string; style?: React.CSSProperties }) {
+  const { t } = useTranslation()
   return (
     <span className={`ba-pill ${variant === 'before' ? 'ba-pill-before' : 'ba-pill-after'} ${className}`} style={style}>
-      {variant === 'before' ? 'Antes' : 'Depois'}
+      {variant === 'before' ? t('services.before') : t('services.after')}
     </span>
   )
 }
@@ -111,7 +112,8 @@ export default function ServicesPortfolio() {
     }
   }, [view])
 
-  const sorted = [...SERVICES].filter(s => s.active).sort((a, b) => a.order - b.order)
+  const localizedServices = useLocalizedServices()
+  const sorted = [...localizedServices].filter(s => s.active).sort((a, b) => a.order - b.order)
 
   return (
     <>
@@ -305,18 +307,63 @@ function ServicePanel({
   onWorkOpen: (work: PortfolioWork) => void
 }) {
   const { t } = useTranslation()
-  const activeWorks = service.works.filter(w => w.active)
+  const [filterTag, setFilterTag] = useState<string | null>(null)
+  const allActiveWorks = service.works.filter(w => w.active)
+  const activeWorks = filterTag
+    ? allActiveWorks.filter(w =>
+        w.title.toLowerCase().includes(filterTag.toLowerCase()) ||
+        (w.description ?? '').toLowerCase().includes(filterTag.toLowerCase())
+      )
+    : allActiveWorks
   const panelRef    = useRef<HTMLDivElement>(null)
   const activeTabRef = useRef<HTMLButtonElement>(null)
   const bodyRef     = useRef<HTMLDivElement>(null)
+  const heroImgRef  = useRef<HTMLImageElement>(null)
 
-  useEffect(() => { panelRef.current?.focus() }, [])
+  // Focus trap + initial focus
+  useEffect(() => {
+    panelRef.current?.focus()
+    const panel = panelRef.current
+    if (!panel) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return
+      const focusable = Array.from(
+        panel.querySelectorAll<HTMLElement>('button, [href], input, [tabindex]:not([tabindex="-1"])')
+      ).filter(el => !el.hasAttribute('disabled'))
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last  = focusable[focusable.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus() }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
+    }
+    panel.addEventListener('keydown', handleKeyDown)
+    return () => panel.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   // Scroll active tab into view & reset body scroll on service change
   useEffect(() => {
     activeTabRef.current?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' })
     bodyRef.current?.scrollTo({ top: 0, behavior: 'instant' })
+    if (heroImgRef.current) heroImgRef.current.style.transform = 'translateY(0)'
+    setFilterTag(null)
   }, [service.id])
+
+  // Passive parallax on hero image
+  useEffect(() => {
+    const body = bodyRef.current
+    if (!body) return
+    const onScroll = () => {
+      const img = heroImgRef.current
+      if (!img) return
+      const offset = Math.min(body.scrollTop * 0.25, 40)
+      img.style.transform = `translateY(${offset}px)`
+    }
+    body.addEventListener('scroll', onScroll, { passive: true })
+    return () => body.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
     <>
@@ -348,12 +395,36 @@ function ServicePanel({
           <div className="sp-drag-pill" />
         </div>
 
+        {/* ── Service tabs (fixed chrome — always visible) ── */}
+        <div className="sp-service-tabs">
+          <div className="sp-tabs" role="tablist">
+            {services.map(svc => {
+              const isActive = svc.id === service.id
+              return (
+                <button
+                  key={svc.id}
+                  ref={isActive ? activeTabRef : undefined}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => !isActive && onServiceChange(svc)}
+                  className={`sp-tab ${isActive ? 'sp-tab-active' : ''}`}
+                >
+                  {SERVICE_ICONS[svc.id]}
+                  <span>{svc.name.split(' ')[0]}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
         {/* ── Scrollable body ── */}
         <div ref={bodyRef} className="sp-body">
 
           {/* ── Hero ── */}
           <div className="sp-hero">
             <img
+              ref={heroImgRef}
               key={service.id}
               src={service.imageUrl}
               alt=""
@@ -373,6 +444,7 @@ function ServicePanel({
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
+              <span className="sp-close-label" aria-hidden="true">{t('ui.close')}</span>
             </button>
 
             <div className="svc-card-badge" style={{ top: '1.1rem', right: '1.1rem' }}>
@@ -405,39 +477,32 @@ function ServicePanel({
                 <p className="sp-scope-label">{t('services.scopeTitle')}</p>
                 <div className="svc-card-tags">
                   {service.subServices.map(sub => (
-                    <span key={sub.id} className="svc-card-tag">{sub.name}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Service tabs (above works) */}
-            <div className="sp-service-tabs">
-              <div className="sp-tabs" role="tablist">
-                {services.map(svc => {
-                  const isActive = svc.id === service.id
-                  return (
                     <button
-                      key={svc.id}
-                      ref={isActive ? activeTabRef : undefined}
+                      key={sub.id}
                       type="button"
-                      role="tab"
-                      aria-selected={isActive}
-                      onClick={() => !isActive && onServiceChange(svc)}
-                      className={`sp-tab ${isActive ? 'sp-tab-active' : ''}`}
+                      onClick={() => setFilterTag(filterTag === sub.name ? null : sub.name)}
+                      className={`svc-card-tag sp-scope-tag ${filterTag === sub.name ? 'sp-scope-tag-active' : ''}`}
                     >
-                      {SERVICE_ICONS[svc.id]}
-                      <span>{svc.name.split(' ')[0]}</span>
+                      {sub.name}
                     </button>
-                  )
-                })}
+                  ))}
+                  {filterTag && (
+                    <button
+                      type="button"
+                      onClick={() => setFilterTag(null)}
+                      className="sp-scope-tag-reset"
+                    >
+                      {t('services.resetFilter')}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Works section */}
             <div className="sp-works">
               <div className="sp-works-header">
-                <p className="sp-works-label">{t('portfolio.title')}</p>
+                <p className="sp-works-label">{service.name}</p>
                 {activeWorks.length > 0 && (
                   <span className="sp-works-count">{activeWorks.length}</span>
                 )}
@@ -452,8 +517,8 @@ function ServicePanel({
                 </div>
               ) : (
                 <div className="sp-works-grid">
-                  {activeWorks.map(work => (
-                    <WorkCard key={work.id} work={work} lng={lng} onClick={() => onWorkOpen(work)} />
+                  {activeWorks.map((work, idx) => (
+                    <WorkCard key={work.id} work={work} lng={lng} index={idx} onClick={() => onWorkOpen(work)} />
                   ))}
                 </div>
               )}
@@ -478,8 +543,8 @@ function ServicePanel({
 
       <style>{`
         @keyframes panelHeroFade {
-          from { opacity: 0; transform: scale(1.02); }
-          to   { opacity: 1; transform: scale(1); }
+          from { opacity: 0; scale: 1.02; }
+          to   { opacity: 1; scale: 1; }
         }
         @keyframes panelContentFade {
           from { opacity: 0; transform: translateY(4px); }
@@ -494,8 +559,9 @@ function ServicePanel({
 /*  WorkCard (inside panel)                                       */
 /* ────────────────────────────────────────────────────────────── */
 
-function WorkCard({ work, lng, onClick }: { work: PortfolioWork; lng: string; onClick: () => void }) {
+function WorkCard({ work, lng, index, onClick }: { work: PortfolioWork; lng: string; index: number; onClick: () => void }) {
   const { t } = useTranslation()
+  const [hovered, setHovered] = useState(false)
   const beforeImg = work.images.find(img => img.isBefore === true)
   const afterImg  = work.images.find(img => img.isBefore === false)
   const hasBefore = Boolean(beforeImg && afterImg)
@@ -506,13 +572,22 @@ function WorkCard({ work, lng, onClick }: { work: PortfolioWork; lng: string; on
       type="button"
       onClick={onClick}
       className="wc-card group"
+      style={{ animationDelay: `${index * 55}ms` }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       {/* Image area */}
       <div className="wc-img-wrap">
         {hasBefore && beforeImg && afterImg ? (
           <>
             <img src={afterImg.url} alt="" className="wc-img" loading="lazy" draggable={false} />
-            <div className="absolute inset-0 overflow-hidden" style={{ clipPath: 'inset(0 50% 0 0)' }}>
+            <div
+              className="absolute inset-0 overflow-hidden"
+              style={{
+                clipPath: hovered ? 'inset(0 35% 0 0)' : 'inset(0 50% 0 0)',
+                transition: 'clip-path 0.6s ease-in-out',
+              }}
+            >
               <img src={beforeImg.url} alt="" className="wc-img" loading="lazy" draggable={false} />
             </div>
             <div className="pointer-events-none absolute bottom-0 top-0 z-10" style={{ left: '50%', transform: 'translateX(-50%)' }}>
@@ -530,22 +605,24 @@ function WorkCard({ work, lng, onClick }: { work: PortfolioWork; lng: string; on
           <img src={work.featuredImageUrl} alt="" className="wc-img" loading="lazy" />
         )}
 
-        <div className="wc-hover-overlay">
-          <span className="wc-hover-btn">
-            {t('services.viewProject')}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="size-3.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </span>
-        </div>
+        <div className="wc-hover-overlay" />
+        <span className="wc-hover-btn">
+          {t('services.viewProject')}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="size-3.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </span>
       </div>
 
       {/* Card body */}
       <div className="wc-body">
         <h4 className="wc-title">{work.title}</h4>
+        {work.description && (
+          <p className="wc-desc-preview">{work.description.slice(0, 80)}</p>
+        )}
         <div className="wc-meta">
           <span className="wc-date">{dateLabel}</span>
-          {hasBefore && <span className="wc-ba-badge">Antes / Depois</span>}
+          {hasBefore && <span className="wc-ba-badge">{t('services.beforeAfter')}</span>}
         </div>
       </div>
     </button>
@@ -638,7 +715,7 @@ function WorkModal({
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="wm-tab-icon">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l-3 3 3 3m8-6l3 3-3 3" />
               </svg>
-              Antes / Depois
+              {t('services.beforeAfter')}
             </button>
             <button
               type="button"
@@ -648,7 +725,7 @@ function WorkModal({
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="wm-tab-icon">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
-              Galeria
+              {t('portfolio.title')}
             </button>
           </div>
         )}
@@ -664,12 +741,12 @@ function WorkModal({
               <div className="wm-content">
                 <div className="wm-captions">
                   <div className="wm-caption-col">
-                    <p className="wm-caption-label">Antes</p>
+                    <p className="wm-caption-label">{t('services.before')}</p>
                     <p className="wm-caption-text">{beforeImg.caption ?? '—'}</p>
                   </div>
                   <div className="wm-caption-divider" />
                   <div className="wm-caption-col">
-                    <p className="wm-caption-label wm-caption-label-gold">Depois</p>
+                    <p className="wm-caption-label wm-caption-label-gold">{t('services.after')}</p>
                     <p className="wm-caption-text">{afterImg.caption ?? '—'}</p>
                   </div>
                 </div>
@@ -799,7 +876,8 @@ function ThumbButton({
   afterLabel: string
   onClick: () => void
 }) {
-  const label = img.caption ?? `Image ${index + 1}`
+  const { t } = useTranslation()
+  const label = img.caption ?? t('services.imageAlt', { n: index + 1 })
 
   return (
     <button
@@ -840,6 +918,7 @@ function ThumbButton({
 /* ────────────────────────────────────────────────────────────── */
 
 function BeforeAfterSlider({ before, after }: { before: WorkImage; after: WorkImage }) {
+  const { t } = useTranslation()
   const [position, setPosition] = useState(50)
   const containerRef = useRef<HTMLDivElement>(null)
   const isDragging = useRef(false)
@@ -893,7 +972,7 @@ function BeforeAfterSlider({ before, after }: { before: WorkImage; after: WorkIm
       {/* After image — full width, bottom layer */}
       <img
         src={after.url}
-        alt={after.caption ?? 'Depois'}
+        alt={after.caption ?? t('services.after')}
         className="absolute inset-0 size-full object-cover"
         draggable={false}
       />
@@ -905,7 +984,7 @@ function BeforeAfterSlider({ before, after }: { before: WorkImage; after: WorkIm
       >
         <img
           src={before.url}
-          alt={before.caption ?? 'Antes'}
+          alt={before.caption ?? t('services.before')}
           className="absolute inset-0 size-full object-cover"
           draggable={false}
         />
@@ -944,7 +1023,7 @@ function BeforeAfterSlider({ before, after }: { before: WorkImage; after: WorkIm
         className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-navy-alt/88 px-3 py-1 text-[0.65rem] font-600 text-muted backdrop-blur-sm"
         style={{ whiteSpace: 'nowrap' }}
       >
-        ← Arraste para comparar →
+        {t('services.dragToCompare')}
       </div>
     </div>
   )

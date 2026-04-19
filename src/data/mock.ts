@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { ServiceCategory, PortfolioItem } from '../types'
 
 const CDN = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663329997620'
@@ -197,4 +199,53 @@ export function getPortfolioByCategory(categoryId: string | null): PortfolioItem
 
 export function getPortfolioPreview(categoryId: string, limit = 3): PortfolioItem[] {
   return MOCK_PORTFOLIO.filter(p => p.active && p.categoryId === categoryId).slice(0, limit)
+}
+
+/* ─── Localization hooks ──────────────────────────────────── */
+function useLoc() {
+  const { i18n } = useTranslation()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return useMemo(() => (key: string, fallback: string): string =>
+    (i18n.t as any)(key, { defaultValue: fallback }), [i18n.language]) // eslint-disable-line react-hooks/exhaustive-deps
+}
+
+export function useLocalizedCategories(): ServiceCategory[] {
+  const loc = useLoc()
+  return useMemo(() => MOCK_CATEGORIES.map(cat => ({
+    ...cat,
+    name: loc(`mockData.${cat.id}.name`, cat.name),
+    shortDescription: loc(`mockData.${cat.id}.shortDescription`, cat.shortDescription),
+    fullDescription: loc(`mockData.${cat.id}.fullDescription`, cat.fullDescription),
+    highlights: cat.highlights.map((h, i) => loc(`mockData.${cat.id}.highlights.h${i}`, h)),
+  })), [loc])
+}
+
+export function useLocalizedPortfolio(): PortfolioItem[] {
+  const loc = useLoc()
+  return useMemo(() => MOCK_PORTFOLIO.map(item => ({
+    ...item,
+    title: loc(`mockData.portfolio.${item.id}.title`, item.title),
+    description: loc(`mockData.portfolio.${item.id}.description`, item.description),
+  })), [loc])
+}
+
+export function usePortfolioByCategory(categoryId: string | null): PortfolioItem[] {
+  const items = useLocalizedPortfolio()
+  return useMemo(
+    () => items.filter(p => p.active && (categoryId === null || p.categoryId === categoryId)),
+    [categoryId, items],
+  )
+}
+
+export function usePortfolioPreview(categoryId: string, limit = 3): PortfolioItem[] {
+  const items = useLocalizedPortfolio()
+  return useMemo(
+    () => items.filter(p => p.active && p.categoryId === categoryId).slice(0, limit),
+    [categoryId, limit, items],
+  )
+}
+
+export function useCategoryBySlug(slug: string | undefined): ServiceCategory | undefined {
+  const cats = useLocalizedCategories()
+  return useMemo(() => (slug ? cats.find(c => c.slug === slug && c.active) : undefined), [slug, cats])
 }

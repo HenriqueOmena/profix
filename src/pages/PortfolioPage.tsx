@@ -1,7 +1,7 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { MOCK_CATEGORIES, getPortfolioByCategory } from '../data/mock'
+import { useLocalizedCategories, usePortfolioByCategory } from '../data/mock'
 import type { PortfolioItem, LoadState } from '../types'
 
 const WHATSAPP  = 'https://wa.me/351936284583'
@@ -17,17 +17,19 @@ function IconWA() {
 
 /* ─── Portfolio card ─────────────────────────────────────── */
 function PortfolioCard({ item, onLightbox }: { item: PortfolioItem; onLightbox: (src: string) => void }) {
-  const cat = MOCK_CATEGORIES.find(c => c.id === item.categoryId)
+  const { t } = useTranslation()
+  const cats = useLocalizedCategories()
+  const cat = cats.find(c => c.id === item.categoryId)
   return (
     <article className="pf-card">
       <button
         className="pf-card-img-btn"
         onClick={() => onLightbox(item.imageUrl)}
         type="button"
-        aria-label={`Ver imagem: ${item.title}`}
+        aria-label={`${t('portfolio.viewImage')}: ${item.title}`}
       >
         <img src={item.imageUrl} alt={item.title} className="pf-card-img" loading="lazy" />
-        {item.featured && <span className="pf-card-badge">Destaque</span>}
+        {item.featured && <span className="pf-card-badge">{t('portfolio.featured')}</span>}
         <div className="pf-card-hover-overlay">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="pf-card-zoom-icon">
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
@@ -66,6 +68,7 @@ function PortfolioSkeleton() {
 
 /* ─── Lightbox ───────────────────────────────────────────── */
 function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
+  const { t } = useTranslation()
   useEffect(() => {
     const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', h)
@@ -75,7 +78,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
 
   return (
     <div className="lightbox-overlay" onClick={onClose} role="dialog" aria-modal="true">
-      <button className="lightbox-close" onClick={onClose} aria-label="Fechar">✕</button>
+      <button className="lightbox-close" onClick={onClose} aria-label={t('ui.close')}>✕</button>
       <img src={src} alt="" className="lightbox-img" onClick={e => e.stopPropagation()} />
     </div>
   )
@@ -93,12 +96,13 @@ export default function PortfolioPage() {
 
   useEffect(() => { setPage(1) }, [activeCategoryId])
 
-  const allItems     = useMemo(() => getPortfolioByCategory(activeCategoryId), [activeCategoryId])
-  const visibleItems = allItems.slice(0, page * PAGE_SIZE)
-  const hasMore      = visibleItems.length < allItems.length
+  const allCategories    = useLocalizedCategories()
+  const allItems         = usePortfolioByCategory(activeCategoryId)
+  const visibleItems     = allItems.slice(0, page * PAGE_SIZE)
+  const hasMore          = visibleItems.length < allItems.length
 
-  const activeCategories = MOCK_CATEGORIES.filter(c => c.active).sort((a, b) => a.order - b.order)
-  const activeLabel      = activeCategories.find(c => c.id === activeCategoryId)?.name ?? 'Todos'
+  const activeCategories = allCategories.filter(c => c.active).sort((a, b) => a.order - b.order)
+  const activeLabel      = activeCategories.find(c => c.id === activeCategoryId)?.name ?? t('portfolio.all')
 
   function setFilter(id: string | null) {
     if (id === null) searchParams.delete('categoria')
@@ -118,12 +122,10 @@ export default function PortfolioPage() {
             <div className="pf-header-text">
               <p className="eyebrow">{t('portfolio.title')}</p>
               <h1 className="pf-page-title">{t('portfolio.title')}</h1>
-              <p className="pf-page-sub">
-                Cada projecto é uma prova concreta do nosso trabalho na Região Autónoma da Madeira.
-              </p>
+              <p className="pf-page-sub">{t('portfolio.subtitle')}</p>
             </div>
             <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold pf-header-cta">
-              <IconWA /> Pedir orçamento
+              <IconWA /> {t('services.requestQuoteShort')}
             </a>
           </div>
           <div className="pf-header-gold-bar" aria-hidden="true" />
@@ -132,7 +134,7 @@ export default function PortfolioPage() {
         <div className="page-wrap pf-content">
 
           {/* ── Category filters ──────────────────────────── */}
-          <div className="pf-filters" role="tablist" aria-label="Filtrar por categoria">
+          <div className="pf-filters" role="tablist" aria-label={t('portfolio.filterByCategory')}>
             <button
               role="tab"
               aria-selected={activeCategoryId === null}
@@ -140,8 +142,8 @@ export default function PortfolioPage() {
               type="button"
               className={`pf-filter-btn ${activeCategoryId === null ? 'is-active' : ''}`}
             >
-              Todos
-              <span className="pf-filter-count">{MOCK_CATEGORIES.reduce((a, c) => a + (c.active ? 1 : 0), 0) * 2}</span>
+              {t('portfolio.all')}
+              <span className="pf-filter-count">{allCategories.reduce((a, c) => a + (c.active ? 1 : 0), 0) * 2}</span>
             </button>
             {activeCategories.map(cat => (
               <button
@@ -161,10 +163,10 @@ export default function PortfolioPage() {
           {activeCategoryId && (
             <div className="pf-filter-active-row">
               <span className="pf-filter-active-label">
-                Filtrando por: <strong>{activeLabel}</strong>
+                {t('portfolio.filteringBy')} <strong>{activeLabel}</strong>
               </span>
               <button onClick={() => setFilter(null)} type="button" className="pf-filter-clear">
-                Limpar filtro
+                {t('portfolio.clearFilter')}
               </button>
             </div>
           )}
@@ -192,8 +194,8 @@ export default function PortfolioPage() {
                     onClick={() => setPage(p => p + 1)}
                     className="pf-load-more-btn"
                   >
-                    Carregar mais
-                    <span className="pf-load-more-count">({allItems.length - visibleItems.length} restantes)</span>
+                    {t('portfolio.loadMore')}
+                    <span className="pf-load-more-count">{t('portfolio.loadMoreCount', { count: allItems.length - visibleItems.length })}</span>
                   </button>
                 </div>
               )}
@@ -208,11 +210,11 @@ export default function PortfolioPage() {
               </svg>
               <p className="pf-empty-text">
                 {activeCategoryId
-                  ? `Ainda não há trabalhos publicados em "${activeLabel}".`
+                  ? t('portfolio.emptyFiltered', { name: activeLabel })
                   : t('portfolio.empty')}
               </p>
               <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold">
-                <IconWA /> Contactar via WhatsApp
+                <IconWA /> {t('actions.contactWhatsapp')}
               </a>
             </div>
           )}
@@ -221,12 +223,12 @@ export default function PortfolioPage() {
           {loadState === 'success' && allItems.length > 0 && !hasMore && (
             <div className="contact-cta-full pf-bottom-cta">
               <div className="contact-cta-full-left">
-                <span className="eyebrow">Tem um projecto em mente?</span>
-                <p className="contact-cta-headline">Orçamento gratuito, sem compromisso.</p>
-                <p className="contact-cta-sub">Respondemos em 24 horas.</p>
+                <span className="eyebrow">{t('portfolio.ctaKicker')}</span>
+                <p className="contact-cta-headline">{t('portfolio.ctaHeadline')}</p>
+                <p className="contact-cta-sub">{t('portfolio.ctaSub')}</p>
               </div>
               <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-gold btn-large">
-                <IconWA /> Pedir orçamento gratuito
+                <IconWA /> {t('actions.requestQuote')}
               </a>
             </div>
           )}

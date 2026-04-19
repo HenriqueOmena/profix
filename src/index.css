@@ -815,6 +815,12 @@ img { display: block; max-width: 100% }
   transition: transform 0.44s cubic-bezier(0.32, 0.72, 0, 1);
   overflow: hidden;
 }
+@media (prefers-reduced-motion: reduce) {
+  .sp-panel { transition: opacity 0.2s ease; }
+  .sp-gold-line { animation: none; }
+  .wc-card { animation: none; }
+  .wc-hover-btn, .wc-hover-overlay { transition: opacity 0.15s ease; }
+}
 
 .sp-gold-line {
   position: absolute;
@@ -824,6 +830,13 @@ img { display: block; max-width: 100% }
   background: linear-gradient(90deg, transparent 5%, var(--gold-dk) 30%, var(--gold) 50%, var(--gold-dk) 70%, transparent 95%);
   opacity: 0.6;
   z-index: 1;
+  transform-origin: center;
+  animation: goldLinePulse 0.7s ease-out;
+}
+@keyframes goldLinePulse {
+  from { opacity: 0; transform: scaleX(0.6); }
+  60%  { opacity: 0.85; }
+  to   { opacity: 0.6; transform: scaleX(1); }
 }
 
 /* Header */
@@ -852,8 +865,9 @@ img { display: block; max-width: 100% }
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  gap: .4rem;
+  width: 38px;
+  height: 38px;
   flex-shrink: 0;
   color: rgba(255,255,255,0.82);
   background: rgba(8,15,26,0.65);
@@ -862,7 +876,25 @@ img { display: block; max-width: 100% }
   cursor: pointer;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
   transition: color 0.18s, border-color 0.18s, background 0.18s;
+}
+.sp-close-label {
+  display: none;
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+}
+@media (min-width: 600px) {
+  .sp-close-btn {
+    width: auto;
+    height: 38px;
+    padding: 0 .85rem 0 .6rem;
+    border-radius: 9999px;
+  }
+  .sp-close-label { display: inline; }
 }
 .sp-close-btn:hover {
   color: var(--gold);
@@ -871,10 +903,14 @@ img { display: block; max-width: 100% }
 }
 .sp-close-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }
 
-/* ── Service tabs (inline, above works) ── */
+/* ── Service tabs (fixed chrome, above scroll body) ── */
 .sp-service-tabs {
+  flex-shrink: 0;
   padding: 0 1.75rem;
   border-bottom: 1px solid var(--border);
+  background: rgba(8,15,26,0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 .sp-tabs {
   display: flex;
@@ -898,7 +934,6 @@ img { display: block; max-width: 100% }
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
   white-space: nowrap;
   cursor: pointer;
   transition: color 0.18s, border-color 0.18s;
@@ -907,6 +942,8 @@ img { display: block; max-width: 100% }
 .sp-tab-active {
   color: var(--gold) !important;
   border-bottom-color: var(--gold) !important;
+  background: rgba(201,152,58,0.10);
+  border-radius: 9999px;
 }
 
 .sp-tab-icon {
@@ -932,7 +969,7 @@ img { display: block; max-width: 100% }
   position: relative;
   flex-shrink: 0;
   overflow: hidden;
-  height: clamp(120px, 16vw, 170px);
+  height: clamp(150px, 20vw, 220px);
 }
 .sp-hero-img {
   position: absolute;
@@ -974,9 +1011,10 @@ img { display: block; max-width: 100% }
 }
 .sp-hero-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
-  font-weight: 700;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: 600;
   line-height: 1.12;
+  letter-spacing: -0.01em;
   color: #fff;
 }
 
@@ -998,7 +1036,7 @@ img { display: block; max-width: 100% }
 
 .sp-desc {
   font-size: .875rem;
-  color: var(--muted);
+  color: rgba(230,237,243,0.78);
   line-height: 1.78;
   position: relative;
   padding-left: 1rem;
@@ -1013,6 +1051,32 @@ img { display: block; max-width: 100% }
 }
 
 .sp-scope { display: flex; flex-direction: column; gap: .55rem }
+
+/* Tappable filter tags */
+.sp-scope-tag {
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+}
+.sp-scope-tag-active {
+  background: rgba(201,152,58,0.22) !important;
+  border-color: var(--gold-dk) !important;
+  color: var(--gold) !important;
+}
+.sp-scope-tag-reset {
+  display: inline-flex;
+  align-items: center;
+  padding: .2rem .6rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-hi);
+  background: transparent;
+  font-size: .62rem;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.18s, border-color 0.18s;
+}
+.sp-scope-tag-reset:hover { color: var(--text); border-color: var(--gold-dk); }
+
 .sp-scope-label {
   font-size: .62rem;
   font-weight: 800;
@@ -1112,10 +1176,37 @@ img { display: block; max-width: 100% }
   .sp-hero-text { padding: 1.5rem 1.2rem 1rem }
   .sp-info { padding: 1.2rem }
   .sp-service-tabs { padding: 0 1.2rem }
-  .sp-tab { padding: .6rem .65rem; font-size: .56rem; gap: .3rem }
-  .sp-tab-icon { width: 13px; height: 13px }
+  .sp-tab { padding: .55rem 1rem; font-size: .56rem; gap: .3rem; min-height: 44px }
+  .sp-tab-icon { width: 16px; height: 16px }
   .sp-works { padding: 1.2rem 1.2rem 0 }
-  .sp-cta-inner { flex-direction: column; align-items: flex-start; text-align: left }
+  .wc-img-wrap { aspect-ratio: 4 / 3 }
+
+  /* Sticky compact CTA strip on mobile */
+  .sp-cta {
+    position: sticky;
+    bottom: 0;
+    margin-top: 1rem;
+    padding: 0;
+    align-self: stretch;
+    z-index: 5;
+  }
+  .sp-cta-inner {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-top: 1px solid rgba(201,152,58,0.4);
+    padding: .85rem 1.2rem;
+    background: rgba(8,15,26,0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    flex-direction: row;
+    align-items: center;
+    gap: .9rem;
+    flex-wrap: nowrap;
+  }
+  .sp-cta-inner > div { display: none; }
+  .sp-cta-inner > a { flex: 1; justify-content: center; }
 }
 
 /* ─── WorkCard (inside panel) — grid card, imagem em cima ─── */
@@ -1216,9 +1307,6 @@ img { display: block; max-width: 100% }
 .wc-hover-overlay {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: rgba(5,12,22,0.52);
   opacity: 0;
   transition: opacity 0.22s ease;
@@ -1228,6 +1316,11 @@ img { display: block; max-width: 100% }
 .wc-card:hover .wc-hover-overlay { opacity: 1; }
 
 .wc-hover-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, calc(-50% + 6px));
+  z-index: 5;
   display: flex;
   align-items: center;
   gap: .5rem;
@@ -1241,6 +1334,22 @@ img { display: block; max-width: 100% }
   font-weight: 700;
   color: var(--gold);
   box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  opacity: 0;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  white-space: nowrap;
+}
+.wc-card:hover .wc-hover-btn {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+@media (hover: none) {
+  .wc-hover-overlay { display: none; }
+  .wc-hover-btn {
+    opacity: 0.85;
+    transform: translate(-50%, -50%);
+    font-size: .68rem;
+    padding: .4rem .85rem;
+  }
 }
 
 /* Card body */
@@ -1264,6 +1373,19 @@ img { display: block; max-width: 100% }
   transition: color 0.2s;
 }
 .wc-card:hover .wc-title { color: var(--gold-lt) }
+
+.wc-desc-preview {
+  display: none;
+  font-size: .68rem;
+  color: var(--dim);
+  line-height: 1.4;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+@media (min-width: 800px) {
+  .wc-desc-preview { display: block; }
+}
 
 .wc-meta {
   display: flex;
@@ -1292,6 +1414,15 @@ img { display: block; max-width: 100% }
   letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--gold);
+}
+
+/* WorkCard stagger animation */
+@keyframes wc-entry {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .wc-card { animation: wc-entry 0.36s ease both; }
 }
 
 /* ─── WorkModal ──────────────────────────────────────────── */

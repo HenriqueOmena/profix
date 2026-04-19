@@ -1,3 +1,6 @@
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+
 /* ─── Types ──────────────────────────────────────────────── */
 
 export type WorkImage = {
@@ -223,3 +226,34 @@ export const SERVICES: ServiceCategory[] = [
     active: true,
   },
 ]
+
+/* ─── Localization hook ───────────────────────────────────── */
+export function useLocalizedServices(): ServiceCategory[] {
+  const { i18n } = useTranslation()
+  return useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const loc = (key: string, fallback: string): string =>
+      (i18n.t as any)(key, { defaultValue: fallback })
+    return SERVICES.map(svc => ({
+      ...svc,
+      name: loc(`serviceData.${svc.id}.name`, svc.name),
+      description: loc(`serviceData.${svc.id}.description`, svc.description),
+      subServices: svc.subServices.map(sub => ({
+        ...sub,
+        name: loc(`serviceData.${svc.id}.subs.${sub.id}`, sub.name),
+      })),
+      works: svc.works.map(work => ({
+        ...work,
+        title: loc(`serviceData.${svc.id}.works.${work.id}.title`, work.title),
+        description: loc(`serviceData.${svc.id}.works.${work.id}.description`, work.description),
+        images: work.images.map(img => ({
+          ...img,
+          caption: img.caption !== undefined
+            ? loc(`serviceData.${svc.id}.works.${work.id}.captions.${img.id}`, img.caption)
+            : undefined,
+        })),
+      })),
+    }))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language])
+}
